@@ -5,11 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第13章 数据融合</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        .eq-scroll{overflow-x:auto;padding:.6rem .2rem;margin:1rem 0;background:var(--paper);border:1px solid #dbe7dd;border-radius:12px;}
+        .eq-scroll math{font-size:1.3rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -42,9 +67,11 @@
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
     </div>
-    <div class="main-content">
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第13章 数据融合</h2>
+        <h1>第13章 数据融合</h1>
+        <p class="dek">从数据级到决策级：三级融合的代价权衡，以及卡尔曼滤波的预测–更新循环。</p>
 
         <p>大家好，我是你们的讲师。想象这样一个场景：10个温度传感器放在同一间屋子里，10个读数分别是22.1°C、22.3°C、22.0°C、21.8°C、22.5°C、500°C、22.2°C、22.4°C、21.9°C和22.1°C。如果直接取平均值，结果是71.73°C——显然有一个传感器故障了（500°C），平均值被严重污染。但如果直接丢弃所有数据，我们又丢失了有价值的信息。<strong>如何从多个不完美的传感器读数中提炼出最准确的结论？</strong>这正是数据融合要回答的问题。</p>
 
@@ -102,13 +129,47 @@
             </tbody>
         </table>
 
-        <p>这三级融合的抽象度依次提高，通信开销依次降低。在WSN中，选择哪一级融合取决于应用需求：如果一个环境监测网络需要完整记录温湿度变化曲线，就应该用数据级融合（保留细节）；如果只需要知道"是否发生火灾"，决策级融合就足够了（每个节点报告"有火/无火"，投票决定）。</p>
+        <p>这三级融合的抽象度依次提高,通信开销依次降低。在WSN中,选择哪一级融合取决于应用需求:如果一个环境监测网络需要完整记录温湿度变化曲线,就应该用数据级融合(保留细节);如果只需要知道"是否发生火灾",决策级融合就足够了（每个节点报告“有火/无火”，投票决定）。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f13t f13d" style="width:100%;height:auto">
+            <title id="f13t">数据融合的三个层次</title>
+            <desc id="f13d">自下而上依次为数据级、特征级、决策级融合，随着抽象度升高，保留的信息减少而通信开销下降。</desc>
+            <rect x="40" y="30" width="680" height="70" rx="12" fill="#e6f5f3" stroke="#147f80"/>
+            <text x="64" y="72" font-size="18" fill="#0f4f4a" font-family="system-ui">数据级融合 · 原始采样 → 加权平均 / 卡尔曼滤波</text>
+            <rect x="110" y="120" width="540" height="70" rx="12" fill="#fdeee7" stroke="#d06d4d"/>
+            <text x="134" y="162" font-size="18" fill="#8a3d24" font-family="system-ui">特征级融合 · 特征向量 → PCA / 小波变换</text>
+            <rect x="200" y="210" width="360" height="70" rx="12" fill="#efeafb" stroke="#7461ba"/>
+            <text x="224" y="252" font-size="18" fill="#4b3d80" font-family="system-ui">决策级融合 · 局部决策 → 投票</text>
+            <line x1="380" y1="100" x2="380" y2="120" stroke="#53676d" stroke-width="2" marker-end="url(#af13)"/>
+            <line x1="380" y1="190" x2="380" y2="210" stroke="#53676d" stroke-width="2" marker-end="url(#af13)"/>
+            <defs><marker id="af13" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#53676d"/></marker></defs>
+        </svg>
+        <figcaption>图 13-1　融合三层次：越靠上抽象度越高、信息损失越大，但需要传输的数据量越小。WSN 常用“特征级/决策级融合 + 簇头聚合”来降低通信能耗。</figcaption>
+        </figure>
 
         <h2>卡尔曼滤波</h2>
 
         <p>卡尔曼滤波是数据融合领域最经典的算法之一，由Rudolf Kalman于1960年提出，在导航、控制、信号处理领域有极为广泛的应用。它是一种<strong>最优递归数据处理算法</strong>——在存在噪声的测量中，通过递推的方式不断估计系统的真实状态。</p>
 
         <p>卡尔曼滤波的核心是<strong>预测-更新</strong>两阶段循环：</p>
+
+        <div class="eq-scroll" data-math-scroll="1" tabindex="0" role="region" aria-label="公式 13-1：一维卡尔曼滤波递推">
+            <math display="block" aria-label="预测阶段：状态不变，协方差增加过程噪声">
+                <msup><mover><mi>x</mi><mo>^</mo></mover><mo>−</mo></msup><mo>=</mo><mover><mi>x</mi><mo>^</mo></mover>
+                <mspace width="1em"/><msup><mi>P</mi><mo>−</mo></msup><mo>=</mo><mi>P</mi><mo>+</mo><mi>Q</mi>
+            </math>
+            <math display="block" aria-label="卡尔曼增益等于预测协方差除以预测协方差与测量噪声之和">
+                <mi>K</mi><mo>=</mo>
+                <mfrac><msup><mi>P</mi><mo>−</mo></msup><mrow><msup><mi>P</mi><mo>−</mo></msup><mo>+</mo><mi>R</mi></mrow></mfrac>
+            </math>
+            <math display="block" aria-label="更新：用测量残差修正状态估计并降低协方差">
+                <mover><mi>x</mi><mo>^</mo></mover><mo>=</mo><msup><mover><mi>x</mi><mo>^</mo></mover><mo>−</mo></msup><mo>+</mo><mi>K</mi><mo>(</mo><mi>z</mi><mo>−</mo><msup><mover><mi>x</mi><mo>^</mo></mover><mo>−</mo></msup><mo>)</mo>
+                <mspace width="1em"/><mo>,</mo><mspace width="1em"/><mi>P</mi><mo>=</mo><mo>(</mo><mn>1</mn><mo>−</mo><mi>K</mi><mo>)</mo><msup><mi>P</mi><mo>−</mo></msup>
+            </math>
+        </div>
+
+        <p>其中 <code>x</code> 为状态估计（如温度），<code>P</code> 为估计的不确定度，<code>Q</code> 与 <code>R</code> 分别是过程噪声与测量噪声协方差。当测量噪声 <code>R</code> 很大（传感器很吵）时，<code>K</code> 趋近 0，滤波器更相信“预测”；反之更相信“测量”。</p>
 
         <pre><code>// 一维卡尔曼滤波器的递推实现
 // 用于从含噪声的传感器读数中估计真实值
@@ -219,7 +280,8 @@ function kalman_filter_step(z):
             <a href="index.html">📖 返回目录</a>
             <a href="14.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
