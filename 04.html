@@ -5,11 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第4章 WSN网络拓扑</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        button{font:inherit;padding:.45rem .9rem;border:1px solid #9ec4bd;background:#fff;color:#0f4f4a;border-radius:999px;cursor:pointer;}
+        button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent);}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav,.topo-controls{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -42,9 +67,11 @@
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
     </div>
-    <div class="main-content">
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第4章 WSN网络拓扑</h2>
+        <h1>第4章 WSN网络拓扑</h1>
+        <p class="dek">星型、树型、Mesh、簇状、混合五种拓扑的结构、代价与适用场景对比。</p>
 
         <p>大家好，我是你们的讲师。第3章我们解决了"两个节点之间如何无线通信"的问题。但WSN很少只有两个节点——在典型场景中，可能有几十甚至上千个传感器节点散布在一个区域内。这些节点之间如何组织？谁跟谁说话？数据怎么汇聚到网关？这就要靠<strong>网络拓扑（Network Topology）</strong>来回答了。</p>
 
@@ -55,6 +82,89 @@
         </div>
 
         <h2>五种拓扑结构详解</h2>
+
+        <figure class="topo-explorer">
+        <svg id="topoSvg" role="img" viewBox="0 0 760 300" aria-labelledby="ftt ftd" style="width:100%;height:auto">
+            <title id="ftt">三种典型 WSN 拓扑示意</title>
+            <desc id="ftd">用下方按钮切换查看星型、树型与 Mesh 拓扑中节点的连接方式。</desc>
+            <g data-topo="star">
+                <circle cx="380" cy="46" r="17" fill="#d06d4d"/>
+                <text x="380" y="24" font-size="15" text-anchor="middle" fill="#8a3d24">网关</text>
+                <g stroke="#53676d" stroke-width="2">
+                    <line x1="380" y1="63" x2="140" y2="214"/><line x1="380" y1="63" x2="260" y2="214"/>
+                    <line x1="380" y1="63" x2="380" y2="214"/><line x1="380" y1="63" x2="500" y2="214"/>
+                    <line x1="380" y1="63" x2="620" y2="214"/>
+                </g>
+                <g fill="#147f80">
+                    <circle cx="140" cy="226" r="12"/><circle cx="260" cy="226" r="12"/>
+                    <circle cx="380" cy="226" r="12"/><circle cx="500" cy="226" r="12"/>
+                    <circle cx="620" cy="226" r="12"/>
+                </g>
+                <text x="380" y="278" font-size="15" text-anchor="middle" fill="#0f4f4a">星型：所有终端单跳直连网关</text>
+            </g>
+            <g data-topo="tree" style="display:none">
+                <circle cx="380" cy="44" r="15" fill="#d06d4d"/>
+                <text x="380" y="22" font-size="14" text-anchor="middle" fill="#8a3d24">根/网关</text>
+                <circle cx="200" cy="140" r="13" fill="#7461ba"/><circle cx="560" cy="140" r="13" fill="#7461ba"/>
+                <text x="200" y="120" font-size="13" text-anchor="middle" fill="#4b3d80">路由器</text>
+                <text x="560" y="120" font-size="13" text-anchor="middle" fill="#4b3d80">路由器</text>
+                <g stroke="#53676d" stroke-width="2" fill="none">
+                    <line x1="380" y1="59" x2="205" y2="128"/><line x1="380" y1="59" x2="555" y2="128"/>
+                    <line x1="200" y1="153" x2="110" y2="228"/><line x1="200" y1="153" x2="290" y2="228"/>
+                    <line x1="560" y1="153" x2="470" y2="228"/><line x1="560" y1="153" x2="650" y2="228"/>
+                </g>
+                <g fill="#147f80">
+                    <circle cx="110" cy="240" r="11"/><circle cx="290" cy="240" r="11"/>
+                    <circle cx="470" cy="240" r="11"/><circle cx="650" cy="240" r="11"/>
+                </g>
+                <text x="380" y="285" font-size="15" text-anchor="middle" fill="#0f4f4a">树型：多跳分层，靠近根的节点更易耗尽</text>
+            </g>
+            <g data-topo="mesh" style="display:none">
+                <g stroke="#53676d" stroke-width="2" fill="none">
+                    <line x1="160" y1="90" x2="380" y2="70"/><line x1="380" y1="70" x2="600" y2="110"/>
+                    <line x1="160" y1="90" x2="600" y2="110"/><line x1="160" y1="90" x2="260" y2="220"/>
+                    <line x1="600" y1="110" x2="500" y2="220"/><line x1="260" y1="220" x2="500" y2="220"/>
+                    <line x1="260" y1="220" x2="380" y2="70"/><line x1="500" y1="220" x2="380" y2="70"/>
+                    <line x1="380" y1="70" x2="380" y2="220"/>
+                </g>
+                <circle cx="380" cy="60" r="14" fill="#d06d4d"/>
+                <text x="380" y="38" font-size="14" text-anchor="middle" fill="#8a3d24">网关</text>
+                <g fill="#147f80">
+                    <circle cx="160" cy="90" r="11"/><circle cx="600" cy="110" r="11"/>
+                    <circle cx="260" cy="220" r="11"/><circle cx="500" cy="220" r="11"/><circle cx="380" cy="220" r="11"/>
+                </g>
+                <text x="380" y="285" font-size="15" text-anchor="middle" fill="#0f4f4a">Mesh：任意可达节点直连，多路径自愈</text>
+            </g>
+        </svg>
+        <div class="topo-controls" role="group" aria-label="切换拓扑类型" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem">
+            <button type="button" data-topo-btn="star" aria-pressed="true">星型</button>
+            <button type="button" data-topo-btn="tree" aria-pressed="false">树型</button>
+            <button type="button" data-topo-btn="mesh" aria-pressed="false">Mesh</button>
+        </div>
+        <figcaption id="topoCaption">图 4-1　星型拓扑：结构最简单、单跳延迟最低，但网关是单点故障。</figcaption>
+        </figure>
+        <script>
+        (function(){
+            var svg=document.getElementById('topoSvg');
+            var cap=document.getElementById('topoCaption');
+            var buttons=[].slice.call(document.querySelectorAll('[data-topo-btn]'));
+            var text={
+                star:'图 4-1　星型拓扑：结构最简单、单跳延迟最低，但网关是单点故障。',
+                tree:'图 4-1　树型拓扑：多跳分层扩展覆盖，但靠近根的路由器更早耗尽电量。',
+                mesh:'图 4-1　Mesh 拓扑：多路径冗余、可自愈，代价是路由维护与能耗显著上升。'
+            };
+            buttons.forEach(function(btn){
+                btn.addEventListener('click',function(){
+                    var key=btn.getAttribute('data-topo-btn');
+                    [].slice.call(svg.querySelectorAll('[data-topo]')).forEach(function(g){
+                        g.style.display=(g.getAttribute('data-topo')===key)?'':'none';
+                    });
+                    buttons.forEach(function(b){b.setAttribute('aria-pressed',b===btn?'true':'false');});
+                    cap.textContent=text[key];
+                });
+            });
+        })();
+        </script>
 
         <h3>1. 星型拓扑（Star Topology）</h3>
         <p>这是最直观、最简单的拓扑结构：所有传感器节点（终端设备）直接与一个中心节点（网关/协调器）通信。终端节点之间不直接通​​信。优点非常突出：结构简单、延时低（单跳）、易于管理（集中式调度）。缺点也很致命：中心节点是<strong>单点故障</strong>，一旦网关失效，整个网络瘫痪；而且覆盖范围受限于中心节点与最远终端之间的单跳通信距离。</p>
@@ -247,7 +357,8 @@ void adjust_tx_power() {
             <a href="index.html">📖 返回目录</a>
             <a href="05.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
