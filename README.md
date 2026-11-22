@@ -13,6 +13,10 @@ open index.html   # macOS
 # 或在浏览器中直接打开 index.html
 ```
 
+> 首页目录已内联进 `index.html`，可完全离线打开，不依赖任何网络请求。
+> 根目录的 `courses.json` 是早期的课程元数据投影，现已不被任何页面引用，
+> 仅作归档保留；若需修改目录，请直接编辑 `index.html` 中的目录节点。
+
 ## 📖 章节目录
 
 | # | 章节 | 核心主题 |
@@ -52,7 +56,7 @@ open index.html   # macOS
 sensor-network-tutorial/
 ├── index.html      # 课程主入口（在线阅读全部章节）
 ├── 01.html ~ 28.html   # 各章节正文
-├── courses.json    # 课程元数据（标题/章节/主题）
+├── courses.json    # 早期课程元数据（已归档，不再被页面引用）
 └── theme.css       # 统一主题样式
 ```
 
