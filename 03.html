@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第3章 无线通信基础</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -42,9 +65,11 @@
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
     </div>
-    <div class="main-content">
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第3章 无线通信基础</h2>
+        <h1>第3章 无线通信基础</h1>
+        <p class="dek">电磁波如何携带数据：ISM 频段选择、调制与扩频、天线，以及一张能算清通信距离的链路预算表。</p>
 
         <p>大家好，我是你们的讲师。上完第2章，你已经对传感器——WSN的"五官"——有了全面的认识。但光有感觉不通话，传感器采集的数据如何传出去？这就要靠WSN的"神经系统"：无线通信。想象一下，你在大棚里布置了50个温湿度传感器节点，每个节点采集的数据需要汇聚到网关，再上传到云端。问题来了：节点之间的链路质量如何？通信距离到底能到多远？为什么有时候隔着两堵墙就收不到信号了？</p>
 
@@ -69,6 +94,33 @@
         </ul>
 
         <p>在WSN设计中，频段选择是第一层设计决策——它决定了通信距离、数据率和抗干扰能力的根本上限。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 820 300" aria-labelledby="f3a-t f3a-d">
+            <title id="f3a-t">不同频段穿透同一障碍物的示意</title>
+            <desc id="f3a-d">同一堵墙前，Sub-1GHz 信号波长长、绕射与穿透强可覆盖全程；2.4GHz 明显衰减；毫米波几乎被阻断。</desc>
+            <defs><marker id="ar3a" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#53676d"/></marker></defs>
+            <rect x="400" y="20" width="36" height="260" fill="#e7e3da" stroke="#9aa0a0"/>
+            <text x="418" y="292" font-size="12" text-anchor="middle" fill="#53676d" font-family="system-ui">墙 / 障碍物</text>
+            <g font-family="system-ui">
+                <text x="20" y="52" font-size="14" fill="#0f4f4a">Sub-1GHz</text>
+                <circle cx="120" cy="60" r="6" fill="#147f80"/><circle cx="760" cy="60" r="6" fill="#147f80"/>
+                <line x1="126" y1="60" x2="756" y2="60" stroke="#147f80" stroke-width="3" marker-end="url(#ar3a)"/>
+                <text x="300" y="48" font-size="12" fill="#53676d">绕射/穿透强，覆盖远</text>
+                <text x="20" y="152" font-size="14" fill="#8a3d24">2.4 / 5GHz</text>
+                <circle cx="120" cy="160" r="6" fill="#d06d4d"/><circle cx="760" cy="160" r="6" fill="#d06d4d"/>
+                <line x1="126" y1="160" x2="396" y2="160" stroke="#d06d4d" stroke-width="3"/>
+                <line x1="440" y1="160" x2="756" y2="160" stroke="#d06d4d" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#ar3a)"/>
+                <text x="300" y="148" font-size="12" fill="#53676d">穿墙后明显衰减</text>
+                <text x="20" y="252" font-size="14" fill="#4b3d80">毫米波 24GHz+</text>
+                <circle cx="120" cy="260" r="6" fill="#7461ba"/>
+                <line x1="126" y1="260" x2="396" y2="260" stroke="#7461ba" stroke-width="3"/>
+                <text x="450" y="266" font-size="20" fill="#b0342a">✕</text>
+                <text x="300" y="248" font-size="12" fill="#53676d">几乎直线传播，被阻断</text>
+            </g>
+        </svg>
+        <figcaption>图 3-1　同一障碍物前不同频段的表现（示意图，用于对比传播机制，非实测数据）：波长越长，绕射与穿透越强、覆盖越远，但可用带宽越窄；频率越高则相反。这正是 Sub-1GHz 适合 LPWAN、2.4GHz 适合高吞吐短距离的根本原因。</figcaption>
+        </figure>
 
         <h2>ISM频段详解</h2>
 
@@ -246,7 +298,40 @@ int main() {
 
         <p>其中<strong>衰落余量（Fade Margin）</strong>是一个经验参数，用于应对信道中的随机变化（多径衰落、天气影响、干扰）。室外视距场景通常取10-15dB，室内复杂环境可能需要20-30dB。</p>
 
-        <p>在前面代码示例中我们做了实际的链路预算计算。从结果可以看出：在868MHz、5km通信距离下，链路余量还有约3.5dB——这是一个不错的预算，说明通信是可靠的。但如果把距离增加到10km，路径损耗会增加6dB，余量变为负值——这时就需要考虑提高天线增益、降低数据率（提升接收灵敏度）或增加中继器。</p>
+        <figure>
+        <svg role="img" viewBox="0 0 820 300" aria-labelledby="f3b-t f3b-d">
+            <title id="f3b-t">链路预算逐项核算示例</title>
+            <desc id="f3b-d">发射功率 14 dBm 依次加上天线与线缆增益、减去自由空间路径损耗，得到接收功率约 -88.2 dBm，再减去灵敏度与衰落余量，链路余量约 33.8 dB。</desc>
+            <defs><marker id="ar3b" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#53676d"/></marker></defs>
+            <g font-family="system-ui">
+                <rect x="15" y="55" width="120" height="74" rx="10" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="75" y="86" font-size="13" text-anchor="middle" fill="#0f4f4a">发射功率</text>
+                <text x="75" y="108" font-size="15" text-anchor="middle" fill="#0f4f4a">14 dBm</text>
+                <rect x="155" y="55" width="140" height="74" rx="10" fill="#fdf6e3" stroke="#916c22"/>
+                <text x="225" y="86" font-size="13" text-anchor="middle" fill="#6b4f14">发射天线/线缆</text>
+                <text x="225" y="108" font-size="15" text-anchor="middle" fill="#6b4f14">+2 −0.5 dB</text>
+                <rect x="315" y="55" width="160" height="74" rx="10" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="395" y="86" font-size="13" text-anchor="middle" fill="#8a3d24">自由空间路径损耗</text>
+                <text x="395" y="108" font-size="15" text-anchor="middle" fill="#8a3d24">−105.2 dB</text>
+                <rect x="495" y="55" width="140" height="74" rx="10" fill="#fdf6e3" stroke="#916c22"/>
+                <text x="565" y="86" font-size="13" text-anchor="middle" fill="#6b4f14">接收天线/线缆</text>
+                <text x="565" y="108" font-size="15" text-anchor="middle" fill="#6b4f14">+2 −0.5 dB</text>
+                <rect x="655" y="55" width="150" height="74" rx="10" fill="#efeafb" stroke="#7461ba"/>
+                <text x="730" y="86" font-size="13" text-anchor="middle" fill="#4b3d80">接收功率</text>
+                <text x="730" y="108" font-size="15" text-anchor="middle" fill="#4b3d80">≈ −88.2 dBm</text>
+                <g stroke="#53676d" stroke-width="2" marker-end="url(#ar3b)">
+                    <line x1="135" y1="92" x2="151" y2="92"/><line x1="295" y1="92" x2="311" y2="92"/>
+                    <line x1="475" y1="92" x2="491" y2="92"/><line x1="635" y1="92" x2="651" y2="92"/>
+                </g>
+                <text x="410" y="175" font-size="15" text-anchor="middle" fill="#203035">链路余量 = 接收功率 − 灵敏度(−137 dBm) − 衰落余量(15 dB)</text>
+                <text x="410" y="205" font-size="16" text-anchor="middle" fill="#0f4f4a">≈ 33.8 dB　＞0 → 可靠（自由空间假设）</text>
+                <text x="410" y="240" font-size="12" text-anchor="middle" fill="#53676d">参数取自下方代码示例（868 MHz、5 km、SF12）；实际环境需留足衰落余量</text>
+            </g>
+        </svg>
+        <figcaption>图 3-2　一次完整的链路预算核算（自由空间 Friis 模型）：每一项增益或损耗逐项相加相减。余量为正表示“平均情况下”可通，但真实信道有衰落与遮挡，需靠衰落余量兑现。数值为教学示例，由下方代码中的参数算出。</figcaption>
+        </figure>
+
+        <p>从结果可以看出：在868MHz、5km通信距离下，链路余量还有约33.8dB——这是一个不错的预算，说明通信是可靠的。如果把距离增加到50km，路径损耗会再增加约20dB，余量降到约13.8dB；在纯自由空间假设下要到约240km余量才会归零。但真实环境中的多径、遮挡和衰落会把有效距离大幅拉近——这正是自由空间公式不能代替现场勘测的原因。</p>
 
         <div class="highlight">
             <strong>工程经验口诀：</strong> "每6dB翻倍距，每3dB过半功"。意思是：路径损耗每减小6dB，通信距离可以翻倍（因为路径损耗与距离的平方成正比）；发射功率每增加3dB（即翻倍），对链路余量的贡献也只有3dB。所以扩大通信距离的第一选择永远不是"加功率"，而是"选更好的天线"或"换低频率"——不加射频功率而获得更好的链路质量，才是WSN设计的境界。
@@ -258,12 +343,21 @@ int main() {
 
         <p>无线通信是传感网的神经系统——它决定了数据从哪里来、能传多远、多可靠。这一章我们从电磁波的物理原理出发，讨论了ISM频段选择、调制解调、扩频技术、天线和链路预算。理解这些基础后，下一章将进入网络层面：<strong>WSN网络拓扑</strong>。多个节点不是简单的一对一连接——它们需要组织成一个网络。是走星型、树型还是Mesh网络？每种拓扑的优缺点是什么？多跳通信为什么能节能？下一章一一解答。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>IEEE. <a href="https://doi.org/10.1109/IEEESTD.2020.9144691">IEEE Std 802.15.4-2020</a>（LR-WPAN 物理层/MAC 层标准）。</li>
+            <li>Semtech. <em>AN1200.22: LoRa Modem Designer’s Guide</em>（扩频因子 SF7–SF12 与接收灵敏度的对应关系）。</li>
+            <li>Friis, H. T. (1946). A note on a simple transmission formula. <em>Proceedings of the IRE</em>, 34(5), 254–256（自由空间路径损耗公式）。</li>
+        </ul>
+        <p>ISM 频段划分与链路预算公式为行业共识；图 3-1 为传播机制示意，图 3-2 的数值由代码示例参数按 Friis 公式算出，均为<strong>教学示例</strong>，不代表具体产品实测值。</p>
+
         <div class="footer-nav">
             <a href="02.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="04.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
