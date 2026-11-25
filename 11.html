@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第11章 时间同步</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -42,9 +65,11 @@
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
     </div>
-    <div class="main-content">
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第11章 时间同步</h2>
+        <h1>第11章 时间同步</h1>
+        <p class="dek">偏移与漂移的区别、RBS／TPSN／FTSP 的取舍，以及泛洪加线性回归为何成为 WSN 时间同步的经典设计。</p>
 
         <p>大家好，我是你们的讲师。设想一个场景：你戴着一块表，你的同事也戴着一块表，但你们的时间差了5分钟。你说"我们3点开会"，同事3点到了会议室，但你2:55已经开完了。鸡同鸭讲。在WSN中，这个问题被放大了成百上千倍——几十上百个节点各自有自己的"钟"，每个钟的走时精度不同、漂移不同，如果不做同步，数据融合、TDMA调度、节点定位等所有依赖"时间坐标"的功能都会出问题。</p>
 
@@ -71,7 +96,7 @@
 
         <p>每个节点的本地时钟可以用一个线性模型描述：</p>
 
-        <p>C(t) = a × t + b</p>
+        <p><math display="inline" aria-label="本地时钟 C(t) 等于漂移率 a 乘以真实时间 t 再加偏移 b"><mi>C</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mi>a</mi><mo>×</mo><mi>t</mi><mo>+</mo><mi>b</mi></math></p>
 
         <p>其中t是真实时间（参考时间），a是时钟的<strong>漂移率（Skew/Drift）</strong>——振荡器频率相对于理想频率的偏差，b是时钟的<strong>偏移（Offset）</strong>——相对于参考时间的初始偏差。</p>
 
@@ -82,6 +107,29 @@
         <div class="tip">
             <strong>一个有用的直观理解：</strong> 偏移（offset）是"钟面差"——你的表比标准时间快了5秒。漂移（skew）是"走时速差"——你的表每过1小时就比标准时间快0.1秒。偏移可以一次性校准（对准表针），漂移却需要持续补偿（因为石英晶振的误差会不断累积）。
         </div>
+
+        <figure>
+        <svg role="img" viewBox="0 0 720 320" aria-labelledby="f11a-t f11a-d">
+            <title id="f11a-t">时钟偏移与漂移的区别</title>
+            <desc id="f11a-d">以真实时间为横轴、本地时钟读数为纵轴：理想时钟为 45 度直线，有偏移的时钟整体上移（截距不同），有漂移的时钟斜率不同。</desc>
+            <defs><marker id="ar11" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#53676d"/></marker></defs>
+            <g font-family="system-ui">
+                <line x1="80" y1="270" x2="670" y2="270" stroke="#53676d" stroke-width="1.6" marker-end="url(#ar11)"/>
+                <line x1="80" y1="270" x2="80" y2="30" stroke="#53676d" stroke-width="1.6" marker-end="url(#ar11)"/>
+                <text x="680" y="290" font-size="12" fill="#53676d">真实时间 t</text>
+                <text x="20" y="40" font-size="12" fill="#53676d">本地时间 C(t)</text>
+                <line x1="90" y1="260" x2="610" y2="60" stroke="#53676d" stroke-width="2.5"/>
+                <text x="600" y="76" font-size="12" fill="#33454b">理想 C=t</text>
+                <line x1="90" y1="220" x2="610" y2="20" stroke="#916c22" stroke-width="2.5"/>
+                <text x="600" y="14" font-size="12" fill="#6b4f14">有偏移</text>
+                <line x1="90" y1="260" x2="580" y2="20" stroke="#d06d4d" stroke-width="2.5"/>
+                <text x="470" y="288" font-size="12" fill="#8a3d24">有漂移（斜率不同）</text>
+                <line x1="90" y1="220" x2="90" y2="260" stroke="#916c22" stroke-width="2" stroke-dasharray="3 3"/>
+                <text x="100" y="245" font-size="12" fill="#6b4f14">偏移 b（截距差）</text>
+            </g>
+        </svg>
+        <figcaption>图 11-1　时钟模型 C(t)=a·t+b：偏移 b 是“钟面差”，一次校准即可对齐；漂移 a 是“走时速差”，会让误差随时间不断累积，必须持续补偿。WSN 同步协议的难点，大半在补偿漂移。</figcaption>
+        </figure>
 
         <h2>传统同步协议：NTP与PTP</h2>
 
@@ -115,6 +163,33 @@
             <li><strong>MAC层时间戳</strong>：在发送和接收的MAC层字节边界处打时间戳，消除协议栈处理延迟的不确定性。</li>
             <li><strong>线性回归补偿漂移</strong>：每个节点维护最近8个同步样本，通过线性回归估计时钟的相对漂移率，并在两次同步之间补偿漂移。</li>
         </ul>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f11b-t f11b-d">
+            <title id="f11b-t">FTSP：泛洪同步 + 线性回归补偿漂移</title>
+            <desc id="f11b-d">左图：根节点的同步消息逐跳泛洪到全网；右图：节点用多个（本地时间，参考时间）样本做最小二乘拟合，得到斜率与截距。</desc>
+            <defs><marker id="ar11b" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#53676d"/></marker></defs>
+            <g font-family="system-ui" text-anchor="middle">
+                <g stroke="#53676d" stroke-width="1.8" marker-end="url(#ar11b)" fill="none">
+                    <line x1="185" y1="64" x2="92" y2="142"/><line x1="185" y1="66" x2="185" y2="142"/><line x1="185" y1="64" x2="278" y2="142"/>
+                    <line x1="90" y1="164" x2="90" y2="232"/><line x1="185" y1="164" x2="185" y2="232"/><line x1="280" y1="164" x2="280" y2="232"/>
+                </g>
+                <circle cx="185" cy="50" r="15" fill="#7461ba"/><text x="185" y="55" font-size="11" fill="#fff">Root</text>
+                <g fill="#e6f5f3" stroke="#147f80"><circle cx="90" cy="150" r="12"/><circle cx="185" cy="150" r="12"/><circle cx="280" cy="150" r="12"/>
+                <circle cx="90" cy="240" r="12"/><circle cx="185" cy="240" r="12"/><circle cx="280" cy="240" r="12"/></g>
+                <text x="185" y="282" font-size="12" fill="#53676d">① 同步消息逐跳泛洪（MAC 层时间戳）</text>
+                <line x1="440" y1="250" x2="724" y2="250" stroke="#53676d" stroke-width="1.5" marker-end="url(#ar11b)"/>
+                <line x1="440" y1="250" x2="440" y2="56" stroke="#53676d" stroke-width="1.5" marker-end="url(#ar11b)"/>
+                <text x="600" y="272" font-size="12" fill="#53676d">本地时间 x</text>
+                <text x="404" y="70" font-size="12" fill="#53676d">参考 y</text>
+                <line x1="468" y1="222" x2="668" y2="96" stroke="#d06d4d" stroke-width="2.5"/>
+                <g fill="#147f80"><circle cx="472" cy="224" r="5"/><circle cx="508" cy="203" r="5"/><circle cx="545" cy="186" r="5"/>
+                <circle cx="582" cy="164" r="5"/><circle cx="620" cy="140" r="5"/><circle cx="658" cy="112" r="5"/></g>
+                <text x="575" y="285" font-size="12" fill="#53676d">② 最小二乘拟合：斜率 = skew，截距 = offset</text>
+            </g>
+        </svg>
+        <figcaption>图 11-2　FTSP 的两半：左边用泛洪把参考时间送到每个节点（只需单向广播，鲁棒且无需树维护）；右边用多个采样点建立“本地时间—参考时间”的回归线，从而在两次同步之间也能补偿漂移。</figcaption>
+        </figure>
 
         <pre><code>// FTSP：基于线性回归的时钟漂移补偿算法
 // 节点在收到N个同步消息后，建立回归模型估计时钟漂移
@@ -244,12 +319,22 @@ function local_to_global(local_time):
 
         <p>我们第12章见。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>Maróti, M., Kusy, B., Simon, G., &amp; Lédeczi, Á. (2004). <a href="https://doi.org/10.1145/1031495.1031501">The flooding time synchronization protocol</a>. <em>SenSys 2004</em>（FTSP）。</li>
+            <li>Elson, J., Girod, L., &amp; Estrin, D. (2002). Fine-grained network time synchronization using reference broadcasts. <em>OSDI 2002</em>（RBS）。</li>
+            <li>Ganeriwal, S., Kumar, R., &amp; Srivastava, M. B. (2003). <a href="https://doi.org/10.1145/958491.958500">Timing-sync protocol for sensor networks</a>. <em>SenSys 2003</em>（TPSN）。</li>
+            <li>IEEE. <em>IEEE Std 802.1AS-2020</em>（基于 PTP 的通用时间同步，gPTP）。</li>
+        </ul>
+        <p>时钟精度与各协议的同步误差以原始论文为准；文中 NTP/PTP 精度为行业典型量级，具体取决于硬件与网络。项目经历属工程叙事，未标注来源的具体数字为<strong>教学示意</strong>。</p>
+
         <div class="footer-nav">
             <a href="10.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="12.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
