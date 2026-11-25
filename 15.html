@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第15章 WSN安全基础</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -42,9 +65,11 @@
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
     </div>
-    <div class="main-content">
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第15章 WSN安全基础</h2>
+        <h1>第15章 WSN安全基础</h1>
+        <p class="dek">无线媒介天生开放：威胁模型、CIA 在传感网中的优先级、AES-CCM 认证加密、ECC 与密钥管理。</p>
 
         <p>大家好，我是你们的讲师。想象这样一个场景：你刚刚在办公楼的智能门锁系统中部署了一套基于WSN的无线门禁——每个门锁节点通过ZigBee网络与中央控制器通信，员工刷工牌开门，系统记录进出日志。一切都显得完美而高效。然而有一天，安保部门发现一个诡异的现象：每天凌晨3点，14楼走廊的门会莫名其妙地自动打开，然后关上。监控录像里空无一人。你查遍了中央控制器的日志，没有任何异常记录——没有非授权卡号的开门请求，没有异常的登录记录。</p>
 
@@ -115,6 +140,33 @@
         </table>
 
         <p>注意，这张表格只是"预告片"——下一章我们会深入每种攻击的机理和防御措施。本章的重点是我们如何在协议栈的基础层（即安全子层）建立防线。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 330" aria-labelledby="f15a-t f15a-d">
+            <title id="f15a-t">WSN 四层协议栈的攻击面</title>
+            <desc id="f15a-d">从物理层到应用层，每层都有典型攻击：干扰、碰撞耗尽、虫洞/Sybil、数据篡改与重放。</desc>
+            <g font-family="system-ui">
+                <rect x="40" y="30" width="230" height="58" rx="10" fill="#efeafb" stroke="#7461ba"/>
+                <text x="155" y="66" font-size="16" text-anchor="middle" fill="#4b3d80">应用层</text>
+                <rect x="40" y="100" width="230" height="58" rx="10" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="155" y="136" font-size="16" text-anchor="middle" fill="#0f4f4a">网络层</text>
+                <rect x="40" y="170" width="230" height="58" rx="10" fill="#fdf6e3" stroke="#916c22"/>
+                <text x="155" y="206" font-size="16" text-anchor="middle" fill="#6b4f14">链路层</text>
+                <rect x="40" y="240" width="230" height="58" rx="10" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="155" y="276" font-size="16" text-anchor="middle" fill="#8a3d24">物理层</text>
+                <g font-size="14" fill="#8a3d24">
+                    <text x="400" y="66">数据篡改 · 重放攻击</text>
+                    <text x="400" y="136">虫洞 · Sybil · 槽洞</text>
+                    <text x="400" y="206">碰撞攻击 · 耗尽攻击</text>
+                    <text x="400" y="276">干扰攻击（Jamming）</text>
+                </g>
+                <g stroke="#9aa7a9" stroke-width="1.5"><line x1="276" y1="59" x2="392" y2="59"/><line x1="276" y1="129" x2="392" y2="129"/>
+                <line x1="276" y1="199" x2="392" y2="199"/><line x1="276" y1="269" x2="392" y2="269"/></g>
+                <text x="400" y="322" font-size="12" fill="#53676d">越靠下层，防御越依赖物理/拓扑手段而非密码学</text>
+            </g>
+        </svg>
+        <figcaption>图 15-1　按协议栈划分的攻击面：上层多用密码学防护，越往下（链路、物理层）越依赖抗干扰、冗余与拓扑手段。安全子层（多为 MAC 层的一部分）是加密与认证的落点。</figcaption>
+        </figure>
 
         <h3>攻击者分类</h3>
 
@@ -292,7 +344,7 @@ function aes_ccm_decrypt_verify(K, N, A, C, T_received):
         <p>在实践中，这个方案的参数选择直接影响安全性：密钥池大小P、每个节点分配k个密钥、密钥路径长度。可以证明，当P足够大且k适中时，任意两个节点之间存在共享密钥的概率可以非常高（>99%），而单个节点被捕获泄露的信息量有限。</p>
 
         <div class="highlight">
-            <strong>关键参数关系：</strong> 假设密钥池大小P=100000，每个节点分配k=250个密钥，则任意两个节点共享至少一个密钥的概率约为 1 - ((P-k)! / P!)^2 约等于 0.5。提高k到400，概率上升到约0.8。这就是"概率性密钥预分配"——你不需要保证每对节点都能直接通信，通过密钥路径间接建立即可。
+            <strong>关键参数关系：</strong> 假设密钥池大小 P=100000，每个节点分配 k=250 个密钥，则任意两个节点至少共享一个密钥的概率可以用组合数算出；由于 P 远大于 k，它近似等于 1 − (1 − k/P)<sup>k</sup>，代入得约 0.47。把 k 提到 400，概率升到约 0.80。这就是“概率性密钥预分配”：不保证每对节点都能直接通信，共享密钥不存在时靠密钥路径间接建立。（以上数值为按公式估算的<strong>教学示意</strong>。）
         </div>
 
         <h3>动态密钥建立</h3>
@@ -325,6 +377,31 @@ function aes_ccm_decrypt_verify(K, N, A, C, T_received):
         <p>还记得本章开头的门锁故事吗？那就是<strong>重放攻击（Replay Attack）</strong>的经典案例。即使你加密了开门指令，攻击者不需要解密——他只需要完整地录制下加密后的帧序列，然后在合适的时候原样重放。接收端能正常解密（密文解密后正确的明文），认证也能通过（MAC也匹配），因为它本质上"就是"合法的帧——只不过是在错误的时间出现的。</p>
 
         <p>防御重放攻击有三种常用方法：</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f15b-t f15b-d">
+            <title id="f15b-t">重放攻击与帧计数器的防御</title>
+            <desc id="f15b-d">攻击者录下合法的开门指令帧，稍后原样重放；若接收端没有帧计数器，就会把重放帧当成合法帧接受。</desc>
+            <defs><marker id="ar15" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#53676d"/></marker>
+            <marker id="ar15r" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#d06d4d"/></marker></defs>
+            <g font-family="system-ui">
+                <rect x="40" y="50" width="130" height="54" rx="12" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="105" y="83" font-size="14" text-anchor="middle" fill="#0f4f4a">发送方</text>
+                <rect x="590" y="50" width="130" height="54" rx="12" fill="#efeafb" stroke="#7461ba"/>
+                <text x="655" y="83" font-size="14" text-anchor="middle" fill="#4b3d80">智能门锁</text>
+                <line x1="174" y1="77" x2="584" y2="77" stroke="#147f80" stroke-width="2.5" marker-end="url(#ar15)"/>
+                <text x="379" y="68" font-size="12" text-anchor="middle" fill="#0f4f4a">合法帧：开门指令</text>
+                <rect x="310" y="200" width="150" height="54" rx="12" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="385" y="233" font-size="14" text-anchor="middle" fill="#8a3d24">攻击者（录音）</text>
+                <line x1="385" y1="110" x2="385" y2="194" stroke="#d06d4d" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ar15r)"/>
+                <text x="398" y="156" font-size="12" fill="#8a3d24">① 捕捉空中帧</text>
+                <line x1="455" y1="210" x2="600" y2="108" stroke="#d06d4d" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#ar15r)"/>
+                <text x="560" y="176" font-size="12" fill="#8a3d24">② 稍后原样重放</text>
+                <text x="380" y="285" font-size="13" text-anchor="middle" fill="#8a3d24">无帧计数器 → 门锁把重放帧当成合法帧接受</text>
+            </g>
+        </svg>
+        <figcaption>图 15-2　重放攻击：攻击者不改一个 bit，只把合法帧“搬运”到错误的时间。加密与 MAC 都拦不住它，因为帧本身完全合法。防御靠新鲜性——帧计数器、时间戳或 Nonce。</figcaption>
+        </figure>
 
         <ul>
             <li><strong>计数器（Frame Counter）</strong>：每个节点维护一个帧计数器，随每次发送递增。接收端只接受计数器值大于已记录最大值的帧。IEEE 802.15.4使用这种方式，缺点是节点重启后计数器重置，需要在Flash中持久化保存。</li>
@@ -388,12 +465,22 @@ function aes_ccm_decrypt_verify(K, N, A, C, T_received):
 
         <p>我们第16章见。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>IEEE. <a href="https://doi.org/10.1109/IEEESTD.2020.9144691">IEEE Std 802.15.4-2020</a>（安全子层与 AES-CCM* 的规范定义）。</li>
+            <li>NIST. <em>SP 800-38C: Recommendation for Block Cipher Modes of Operation — CCM</em>（CCM 认证加密模式）。</li>
+            <li>Eschenauer, L., &amp; Gligor, V. D. (2002). <a href="https://doi.org/10.1145/586110.586117">A key-management scheme for distributed sensor networks</a>. <em>ACM CCS 2002</em>。</li>
+            <li>Zhu, S., Setia, S., &amp; Jajodia, S. (2006). <a href="https://doi.org/10.1145/1218556.1218559">LEAP+: Efficient security mechanisms for large-scale distributed sensor networks</a>. <em>ACM TOSN</em>, 2(4)。</li>
+        </ul>
+        <p>算法与安全机制以标准与原始论文为准。表 15 中的密钥长度对应关系与文中能耗量级为行业典型值，来自上表/上列来源的量级估计；未标注来源的具体概率与时间均为<strong>教学示意</strong>。</p>
+
         <div class="footer-nav">
             <a href="14.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="16.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
