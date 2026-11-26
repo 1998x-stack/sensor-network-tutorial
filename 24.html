@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第24章 硬件设计实战</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--rf:#d06d4d;--power:#7461ba;--mcu:#2f6fb0;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,10 +64,12 @@
             <li><a href="27.html">第27章 新一代传感网</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第24章 硬件设计实战</h2>
+        <h1>第24章 硬件设计实战</h1>
+        <p class="dek">从原理图到可上电的实物：节点硬件四模块架构、去耦与晶振、50 Ω 微带线、天线匹配网络、低功耗清单与打样调试。</p>
 
         <p>大家好，我是你们的讲师。想象一下这个场景：你花了两周精心设计了一个传感器节点的电路图，又花了一周布好PCB板，满怀期待地把Gerber文件发给了打样工厂。一周后板子寄回来了，你小心翼翼地焊上元件，上电——结果发现通信距离只有3米，而你的设计目标是100米。更让人抓狂的是，你检查了三遍原理图，每个元件的封装都没焊错，可就是找不到问题出在哪。</p>
 
@@ -64,6 +89,42 @@
             <li><strong>传感器接口</strong>：通过I2C、SPI、UART或模拟GPIO连接各类传感器。设计时要考虑传感器电源的独立控制（便于功耗管理）和模拟信号的抗干扰布线。</li>
             <li><strong>电源管理</strong>：包括电池（或能量收集模块）、DC-DC转换器（升压/降压）、LDO稳压器、电池电量监测电路。电源是WSN节点的"命门"——很多看似"正常"的节点，其实大部分能量都浪费在了电源转换效率上。</li>
         </ul>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f24a-t f24a-d">
+            <title id="f24a-t">WSN 节点硬件四模块架构与电源域</title>
+            <desc id="f24a-d">电源管理（电池 / DC-DC / LDO）为 MCU、RF 前端、传感器接口三个电源域供电；MCU 经 SPI/I2C/UART 与 RF 芯片和传感器通信；RF 前端经 50 Ω 传输线与天线相连。</desc>
+            <g font-family="system-ui" font-size="13">
+                <rect x="30" y="112" width="150" height="80" rx="10" fill="#efeafb" stroke="#7461ba"/>
+                <text x="105" y="140" text-anchor="middle" fill="#4b3d80">电源管理</text>
+                <text x="105" y="160" text-anchor="middle" fill="#6b5aa0">电池 / DC-DC / LDO</text>
+                <text x="105" y="180" text-anchor="middle" fill="#6b5aa0">电量监测 ADC</text>
+                <rect x="300" y="40" width="170" height="64" rx="10" fill="#e8f1fb" stroke="#2f6fb0"/>
+                <text x="385" y="68" text-anchor="middle" fill="#1d4d7c">MCU</text>
+                <text x="385" y="88" text-anchor="middle" fill="#4a79a6">协议栈 / 调度 / 中断</text>
+                <rect x="300" y="140" width="170" height="64" rx="10" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="385" y="168" text-anchor="middle" fill="#8a3d24">RF 前端</text>
+                <text x="385" y="188" text-anchor="middle" fill="#b06a4e">调制解调 / 收发</text>
+                <rect x="560" y="140" width="170" height="64" rx="10" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="645" y="168" text-anchor="middle" fill="#0f4f4a">传感器接口</text>
+                <text x="645" y="188" text-anchor="middle" fill="#2f7a77">SPI / I2C / UART / ADC</text>
+                <g stroke="#8fb0b3" stroke-width="2" fill="none">
+                    <path d="M180,140 L300,72"/>
+                    <path d="M180,150 L300,172"/>
+                    <path d="M180,168 L560,172"/>
+                    <line x1="470" y1="172" x2="560" y2="172"/>
+                    <line x1="385" y1="104" x2="385" y2="140"/>
+                </g>
+                <text x="240" y="98" fill="#53676d" font-size="11">电源域</text>
+                <text x="505" y="122" fill="#53676d" font-size="11">SPI / GPIO</text>
+                <text x="250" y="205" fill="#53676d" font-size="11">传感器独立供电</text>
+                <g stroke="#d06d4d" stroke-width="2"><line x1="470" y1="172" x2="520" y2="172"/></g>
+                <text x="600" y="120" fill="#8a3d24" font-size="11">50 Ω 微带线 → 天线</text>
+                <line x1="730" y1="172" x2="745" y2="172" stroke="#d06d4d" stroke-width="3"/>
+            </g>
+        </svg>
+        <figcaption>图 24-1：WSN 节点的四个功能模块与电源域。电源管理把电池/转换器输出拆成独立电源域，分别供电给 MCU、RF 前端与传感器，便于休眠时逐域断电；MCU 经 SPI/GPIO 控制 RF 芯片，RF 前端到天线之间必须保持 50 Ω 阻抗。模块划分与选型为通用工程实践示意。</figcaption>
+        </figure>
 
         <h2>原理图设计：细节决定成败</h2>
 
@@ -99,6 +160,33 @@
             <li><strong>RF走线不能有直角</strong>：所有RF走线必须用135°钝角或圆弧过渡。直角会产生阻抗突变和辐射，严重时会让你的FCC认证测试直接不通过。</li>
             <li><strong>足够的地过孔</strong>：RF走线两侧要打足够多的地过孔（接地通孔），间距不超过λ/20（2.4GHz时约6mm）。这些过孔构成了"法拉第笼"，将RF信号限制在微带线内。</li>
         </ul>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 280" aria-labelledby="f24b-t f24b-d">
+            <title id="f24b-t">四层 PCB 上 50 Ω 微带线的截面与宽度估算</title>
+            <desc id="f24b-d">顶层微带线宽度 w、介质厚度 h、介电常数 εr≈4.3；对 FR4 四层板，50 Ω 微带线宽度约等于介质厚度的 1.8 倍，例：h=0.2 mm 时 w≈0.36 mm。两侧地过孔将 RF 信号约束在走线内。</desc>
+            <g font-family="system-ui" font-size="13">
+                <rect x="60" y="60" width="640" height="26" fill="#cfe3d2" stroke="#6f9a78"/>
+                <rect x="60" y="86" width="640" height="90" fill="#eef3ee" stroke="#c9d6dd"/>
+                <rect x="60" y="176" width="640" height="26" fill="#c9d6dd" stroke="#8fa4ad"/>
+                <rect x="300" y="52" width="160" height="16" fill="#d06d4d"/>
+                <text x="380" y="46" text-anchor="middle" fill="#8a3d24">微带线 w（50 Ω）</text>
+                <text x="80" y="76" fill="#4a6b52" font-size="12">顶层铜箔</text>
+                <text x="80" y="140" fill="#53676d" font-size="12">FR4 介质  h, εr≈4.3</text>
+                <text x="80" y="194" fill="#3c5560" font-size="12">接地平面（连续、无走线穿越）</text>
+                <line x1="580" y1="52" x2="580" y2="90" stroke="#8fa4ad" stroke-dasharray="4 3"/>
+                <text x="600" y="76" fill="#53676d" font-size="12">h = 介质厚度</text>
+                <g stroke="#147f80" stroke-width="2">
+                    <line x1="285" y1="58" x2="285" y2="196"/>
+                    <line x1="475" y1="58" x2="475" y2="196"/>
+                </g>
+                <text x="285" y="218" text-anchor="middle" fill="#0f4f4a" font-size="11">地过孔</text>
+                <text x="475" y="218" text-anchor="middle" fill="#0f4f4a" font-size="11">地过孔</text>
+                <text x="60" y="258" fill="#53676d" font-size="12">FR4 四层板经验式：w ≈ 1.8 × h（例：h=0.2 mm → w≈0.36 mm）。实际值需用场求解器/板厂叠层参数校准。</text>
+            </g>
+        </svg>
+        <figcaption>图 24-2：四层 FR4 板上 50 Ω 微带线的截面。阻抗由走线宽 w、介质厚度 h 与介电常数 εr 共同决定；FR4（εr≈4.3）下常用经验式 w≈1.8h，例如介质厚 0.2 mm 对应走线宽约 0.36 mm。走线两侧的地过孔与下方连续地平面共同约束 RF 回流路径。（经验式为教学示意，精确值以板厂叠层与场求解结果为准。）</figcaption>
+        </figure>
 
         <div class="warning">
             <strong>血的教训：</strong> 有一个创业团队设计了一款基于CC2530的ZigBee传感器节点。他们在原理图阶段一切顺利，PCB打样出来后一测——通信距离只有3米，而CC2530的指标是100米。找了一个月问题，最后发现是PCB第二层的接地平面被一条电源走线切成两半了。原本完整的"地"被截断，RF信号的回流路径被迫绕了一个大圈，阻抗从50Ω变成了120Ω。他们在第二版中把那条电源走线移到第三层，保留了RF区域地平面的完整性——通信距离直接回到了90米。改一处走线，性能提升30倍。
@@ -284,12 +372,23 @@ if __name__ == "__main__":
 
         <p>下一章，我们将切换到软件视角——<strong>协议栈实现</strong>。硬件再好，没有软件的驱动也不过是一堆"昂贵的沙子"。我们将深入Contiki-NG、TinyOS、RIOT OS等主流WSN操作系统，动手实现一个完整的CoAP传感器采集和通信系统。硬件和软件的结合，才是真正意义上的"传感网"。我们在第25章见。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>Texas Instruments. <a href="https://www.ti.com/product/CC2538">CC2538 SoC</a> 与 <a href="https://www.ti.com/product/CC2650">CC2650</a> 产品页（数据手册、参考设计）。</li>
+            <li>Nordic Semiconductor. <a href="https://www.nordicsemi.com/Products/nRF52840">nRF52840 Product Specification</a>（BLE/Thread 多协议 SoC）。</li>
+            <li>Espressif. <a href="https://www.espressif.com/en/products/socs/esp32-c6">ESP32-C6</a>（Wi-Fi 6 + BLE + 802.15.4）。</li>
+            <li>Texas Instruments. <a href="https://www.ti.com/lit/an/swra117d/swra117d.pdf">AN043：Small Size 2.4 GHz PCB Antenna</a>（PCB 天线设计应用笔记）。</li>
+            <li>Akyildiz, I. F. et al. (2002). <a href="https://doi.org/10.1016/S1389-1286(01)00302-4">Wireless sensor networks: a survey</a>. <em>Computer Networks</em>（节点能量与硬件约束的经典综述）。</li>
+        </ul>
+        <p>SoC 电流/存储参数以各厂商最新数据手册为准。文中"硬件问题 60/30/10 分布"、"通信距离 3 m→90 m"案例、"AA 电池≈9.9 年"续航估算、"去耦走线每 1 mm 增加约 1 nH"等均为经验值或教学示意，用以说明量级关系，不代表特定设计的实测结果。</p>
+
         <div class="footer-nav">
             <a href="23.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="25.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
