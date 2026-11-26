@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第20章 工业无线传感网</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,10 +64,12 @@
             <li><a href="27.html">第27章 新一代传感网</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第20章 工业无线传感网</h2>
+        <h1>第20章 工业无线传感网</h1>
+        <p class="dek">EMI 与本质安全的严苛约束下：WirelessHART 的 TSCH 时隙跳频、ISA100.11a、Wi-SUN、无线 TSN 与 uRLLC。</p>
 
         <p>大家好，我是你们的讲师。想象这样一个场景：你走进一座化工厂的反应车间，周围是数米高的不锈钢反应釜、纵横交错的管道，空气中弥漫着淡淡的化学品气味。这里温度常年维持在45°C以上，大型电机和变频器产生的电磁干扰足以让普通的Wi-Fi信号完全瘫痪。但正是在这样的环境里，数百个无线传感器正在实时监测反应釜内壁的温度、管道的振动频谱和阀门的开度——任何一处的异常都可能意味着安全隐患。</p>
 
@@ -137,6 +162,46 @@ function onSlotInterrupt(schedule) {
 }</code></pre>
 
         <p>TSCH的威力来自两个层面：<strong>时间分集</strong>（每个设备有固定的时隙，避免随机的CSMA冲突）和<strong>频率分集</strong>（每次传输跳到不同信道，任何单个信道上的干扰只影响一次传输）。配合WirelessHART的网状路由（每个节点可做中继），端到端可靠性可达99.9%以上。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 320" aria-labelledby="f20a-t f20a-d">
+            <title id="f20a-t">TSCH 的时隙——信道二维调度网格</title>
+            <desc id="f20a-d">横轴为时隙、纵轴为信道；一对节点在每个时隙占用不同信道逐跳跳频，单信道干扰只影响一次传输。</desc>
+            <g font-family="system-ui" font-size="13">
+                <g fill="#53676d">
+                    <text x="110" y="40">时隙 0</text><text x="180" y="40">1</text><text x="250" y="40">2</text>
+                    <text x="320" y="40">3</text><text x="390" y="40">4</text><text x="460" y="40">5</text>
+                    <text x="530" y="40">6</text><text x="600" y="40">7</text>
+                </g>
+                <g fill="#6b4f14" text-anchor="end">
+                    <text x="100" y="72">信道 11</text><text x="100" y="112">14</text><text x="100" y="152">19</text>
+                    <text x="100" y="192">21</text><text x="100" y="232">24</text><text x="100" y="272">26</text>
+                </g>
+                <g fill="none" stroke="#c9d6dd">
+                    <rect x="110" y="45" width="560" height="240"/>
+                    <line x1="180" y1="45" x2="180" y2="285"/><line x1="250" y1="45" x2="250" y2="285"/>
+                    <line x1="320" y1="45" x2="320" y2="285"/><line x1="390" y1="45" x2="390" y2="285"/>
+                    <line x1="460" y1="45" x2="460" y2="285"/><line x1="530" y1="45" x2="530" y2="285"/>
+                    <line x1="600" y1="45" x2="600" y2="285"/>
+                    <line x1="110" y1="85" x2="670" y2="85"/><line x1="110" y1="125" x2="670" y2="125"/>
+                    <line x1="110" y1="165" x2="670" y2="165"/><line x1="110" y1="205" x2="670" y2="205"/>
+                    <line x1="110" y1="245" x2="670" y2="245"/>
+                </g>
+                <g fill="#147f80">
+                    <rect x="112" y="47" width="66" height="36"/>
+                    <rect x="182" y="87" width="66" height="36"/>
+                    <rect x="252" y="127" width="66" height="36"/>
+                    <rect x="322" y="167" width="66" height="36"/>
+                    <rect x="392" y="207" width="66" height="36"/>
+                    <rect x="462" y="47" width="66" height="36"/>
+                    <rect x="532" y="127" width="66" height="36"/>
+                    <rect x="602" y="207" width="66" height="36"/>
+                </g>
+                <text x="110" y="305" font-size="12" fill="#0f4f4a">■ 同一链路占用的 (时隙, 信道) 单元——沿对角线跳频</text>
+            </g>
+        </svg>
+        <figcaption>图 20-1：TSCH 的时隙——信道二维调度。网络管理器为每条链路分配 (时隙号, 信道偏移) 组合；链路在每个时隙跳到不同信道，从而把多径与窄带干扰在频域上打散。图为教学示意，实际调度表由网络管理器按拓扑生成。</figcaption>
+        </figure>
 
         <div class="tip">
             <strong>有趣的事实：</strong> WirelessHART的时隙精确同步要求全网节点的时间误差在100μs以内。它是如何做到的？每个数据帧携带发送方的ASN计数器，接收方通过比较本地ASN和帧中的ASN来调整自己的时钟——这个过程在每次数据交换中天然完成，不需要额外的同步报文。这种"捎带式"同步是工业WSN的经典设计。
@@ -269,7 +334,38 @@ function onSlotInterrupt(schedule) {
             <strong>趋势展望：</strong> 新一代的工业无线网关正在融合"边缘计算+协议转换+云连接"三大功能。例如西门子的SCALANCE系列和罗克韦尔的MGP（Managed Gateway Platform），都可以在网关本地运行Node-RED流处理和轻量级AI推理，然后通过OPC UA over MQTT将数据上云。IWSN网关从一个"协议翻译器"变成了"边缘智能节点"。
         </div>
 
-        <h2>一个真实的"踩坑"故事</h2>
+        <figure>
+        <svg role="img" viewBox="0 0 760 330" aria-labelledby="f20b-t f20b-d">
+            <title id="f20b-t">IT/OT 融合的边缘网关架构</title>
+            <desc id="f20b-d">OT 层传感器与执行器经工业无线网络接入边缘网关，网关做协议转换与边缘推理，再经 OPC UA/MQTT 上到 IT 层 SCADA、MES 与云平台。</desc>
+            <g font-family="system-ui" font-size="13">
+                <rect x="120" y="20" width="520" height="58" rx="10" fill="#efeafb" stroke="#7461ba"/>
+                <text x="380" y="46" text-anchor="middle" fill="#4b3d80">IT 层：SCADA · MES · 云平台 · 数字孪生</text>
+                <text x="380" y="66" text-anchor="middle" font-size="12" fill="#6b5aa0">OPC UA / MQTT / REST</text>
+                <line x1="380" y1="78" x2="380" y2="118" stroke="#8fb0b3" marker-end="url(#ar20)"/>
+                <line x1="398" y1="118" x2="398" y2="78" stroke="#8fb0b3" marker-end="url(#ar20)"/>
+                <rect x="170" y="118" width="420" height="66" rx="10" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="380" y="146" text-anchor="middle" fill="#8a3d24">边缘网关：协议转换 · 边缘 AI 推理 · 数据缓存</text>
+                <text x="380" y="168" text-anchor="middle" font-size="12" fill="#b06a4e">SCALANCE / MGP 类设备</text>
+                <line x1="380" y1="184" x2="380" y2="224" stroke="#8fb0b3" marker-end="url(#ar20)"/>
+                <line x1="398" y1="224" x2="398" y2="184" stroke="#8fb0b3" marker-end="url(#ar20)"/>
+                <rect x="120" y="224" width="520" height="80" rx="10" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="380" y="248" text-anchor="middle" fill="#0f4f4a">OT 层：WirelessHART / ISA100.11a / Wi-SUN / TSN</text>
+                <g fill="#0f4f4a">
+                    <rect x="150" y="262" width="90" height="30" rx="6" fill="#cfe9e6"/><text x="195" y="282" text-anchor="middle">温度节点</text>
+                    <rect x="256" y="262" width="90" height="30" rx="6" fill="#cfe9e6"/><text x="301" y="282" text-anchor="middle">压力节点</text>
+                    <rect x="362" y="262" width="90" height="30" rx="6" fill="#cfe9e6"/><text x="407" y="282" text-anchor="middle">阀门节点</text>
+                    <rect x="468" y="262" width="140" height="30" rx="6" fill="#cfe9e6"/><text x="538" y="282" text-anchor="middle">执行器 / 控制器</text>
+                </g>
+                <text x="560" y="34" font-size="12" fill="#53676d">OT 数据上行</text>
+                <text x="560" y="52" font-size="12" fill="#53676d">IT 指令下行</text>
+                <defs><marker id="ar20" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8fb0b3"/></marker></defs>
+            </g>
+        </svg>
+        <figcaption>图 20-2：IT/OT 融合架构。现场 OT 层的传感器与执行器经工业无线网络接入边缘网关，网关完成协议转换与边缘推理后，用 OPC UA/MQTT 上行到 IT 层。融合的关键是在网关处兼顾实时性与数据开放性。（教学示意：分层为概念模型，厂商实现各异。）</figcaption>
+        </figure>
+
+        <h2>一个真实的“踩坑”故事</h2>
 
         <p>2023年，我参与了某大型石化企业的WirelessHART部署项目。他们的反应车间需要监测24个反应釜的表面温度。实验室测试阶段一切良好——现场部署时遇到了出乎意料的麻烦：反应釜周围的<strong>金属反射导致严重的多径干扰</strong>。</p>
 
@@ -285,12 +381,22 @@ function onSlotInterrupt(schedule) {
 
         <p>好了，工业的硬核之旅到此结束。下一章我们要把视角从"固定的工厂"转向"移动的水下世界"——<strong>移动与水下传感网</strong>。当节点会移动、环境从空气变成海水、通信从电磁波变成声波，WSN的设计范式将发生天翻地覆的变化。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>IEC. <a href="https://webstore.iec.ch/publication/7036">IEC 62591 (WirelessHART)</a>（TSCH 调度、图路由与网络管理器）。</li>
+            <li>ISA. <a href="https://www.isa.org/standards-and-publications/isa-standards/isa-standards-committees/isa100">ISA-100.11a / IEC 62734</a>（双模式路由与自适应频率规避）。</li>
+            <li>IEEE. <a href="https://doi.org/10.1109/IEEESTD.2020.9144691">IEEE Std 802.15.4-2020</a>（TSCH 时隙格式与 2.4GHz 信道号）。</li>
+            <li>IETF. <a href="https://datatracker.ietf.org/doc/rfc8180/">RFC 8180</a> / <a href="https://datatracker.ietf.org/doc/rfc7554/">RFC 7554</a>（6TiSCH 架构与 TSCH over IPv6）。</li>
+        </ul>
+        <p>时隙长度、跳频机制与协议分层以 IEC/ISA/IEEE 标准为准。文中的 99.9% 可靠性、10 ms 时隙、EMI 抬升 15–20 dB 以及石化项目 15% 丢包率等具体数值为典型值或案例叙述，属<strong>教学示意</strong>，实际结果随现场环境与调度配置而变。</p>
+
         <div class="footer-nav">
             <a href="19.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="21.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
