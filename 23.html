@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第23章 仿真与建模</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,10 +64,12 @@
             <li><a href="27.html">第27章 新一代传感网</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第23章 仿真与建模</h2>
+        <h1>第23章 仿真与建模</h1>
+        <p class="dek">为什么非仿真不可：NS-3、Cooja、OMNeT++/INET 与 MATLAB 的定位，Simulation-Reality Gap 与校准工作流。</p>
 
         <p>大家好，我是你们的讲师。想象一下你刚设计了一个新的WSN路由协议，想要验证它的性能。最直接的办法是什么？买200个传感器节点，布置在一片区域里，运行你的协议，然后采集数据。听起来很合理，但现实是：200个节点成本可能超过10万元，部署调试需要两三周，更糟的是——只要环境温度变化几度或者有人不小心碰到一个节点，你的实验数据就废了，一切重来。</p>
 
@@ -281,6 +306,33 @@ int main(int argc, char *argv[]) {
 
         <p>折腾了两周找原因，最后发现是仿真中的<strong>墙壁衰减</strong>完全没有建模。办公室有很多隔断墙、玻璃门、金属柜子，这些都会引入额外的穿透损耗。NS3中默认的信道模型是完全开放空间的，除非你手动注入墙壁衰减参数，否则它会默认无线电波可以穿透一切。从那以后，我养成了一个习惯：在仿真中<strong>故意采用更悲观的信道参数</strong>（路径损耗指数设高一点、阴影方差设大一点），这样仿真结果虽然"难看"一些，反而更接近真实情况。这个教训让我明白了一个道理：<strong>仿真中好看的数字往往是危险的信号，不好看的数字才更值得信任</strong>。</p>
 
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f23b-t f23b-d">
+            <title id="f23b-t">Simulation-Reality Gap：两个典型指标对比</title>
+            <desc id="f23b-d">节能路由论文：仿真节能 40% 而实测不到 10%；室内定位：仿真误差约 1.5m 而实测中位数 4.8m。</desc>
+            <g font-family="system-ui" font-size="13">
+                <text x="60" y="34" fill="#203035">节能效果（论文案例）</text>
+                <text x="440" y="34" fill="#203035">室内定位误差中位数</text>
+                <line x1="60" y1="240" x2="360" y2="240" stroke="#c9d6dd"/>
+                <line x1="440" y1="240" x2="740" y2="240" stroke="#c9d6dd"/>
+                <rect x="100" y="80" width="70" height="160" fill="#147f80"/>
+                <text x="135" y="70" text-anchor="middle" fill="#0f4f4a">40%</text>
+                <text x="135" y="258" text-anchor="middle" fill="#53676d">仿真</text>
+                <rect x="240" y="200" width="70" height="40" fill="#d06d4d"/>
+                <text x="275" y="192" text-anchor="middle" fill="#8a3d24">&lt;10%</text>
+                <text x="275" y="258" text-anchor="middle" fill="#53676d">实测</text>
+                <rect x="480" y="200" width="70" height="40" fill="#147f80"/>
+                <text x="515" y="192" text-anchor="middle" fill="#0f4f4a">1.5m</text>
+                <text x="515" y="258" text-anchor="middle" fill="#53676d">仿真</text>
+                <rect x="620" y="112" width="70" height="128" fill="#d06d4d"/>
+                <text x="655" y="104" text-anchor="middle" fill="#8a3d24">4.8m</text>
+                <text x="655" y="258" text-anchor="middle" fill="#53676d">实测</text>
+                <text x="60" y="288" fill="#53676d" font-size="12">柱高按各自量纲示意；两组数据来自正文叙述的案例，不代表普适比率。</text>
+            </g>
+        </svg>
+        <figcaption>图 23-2：Simulation-Reality Gap 的两个典型表现。左：节能路由的仿真收益（40%）在真实平台上缩水到不足 10%；右：室内定位的仿真误差（约 1.5 m）在真实办公室中变为中位数 4.8 m——主因是仿真中缺省的信道模型未计入墙体穿透损耗。柱高按各自量纲示意。</figcaption>
+        </figure>
+
         <h2>仿真工作流最佳实践</h2>
 
         <p>经过多年的摸爬滚打，我总结了一套比较实用的仿真工作流：</p>
@@ -295,18 +347,60 @@ int main(int argc, char *argv[]) {
 
         <p>这套工作流看起来花时间，但它能帮你避免在最糟糕的时间点——投完论文或者交付产品之后——才发现仿真结果不可靠。</p>
 
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f23a-t f23a-d">
+            <title id="f23a-t">WSN 仿真工作流：从原型到实测的闭环</title>
+            <desc id="f23a-d">先用脚本快速原型，再进 NS-3/OMNeT++ 搭网，做重复实验取置信区间，用 Cooja 验证功耗时序，最后小规模实测；不一致则回溯校准模型。</desc>
+            <g font-family="system-ui" font-size="12">
+                <rect x="20" y="40" width="130" height="64" rx="9" fill="#efeafb" stroke="#7461ba"/>
+                <text x="85" y="66" text-anchor="middle" fill="#4b3d80">1 快速原型</text>
+                <text x="85" y="86" text-anchor="middle" fill="#6b5aa0">MATLAB / Python</text>
+                <rect x="168" y="40" width="130" height="64" rx="9" fill="#efeafb" stroke="#7461ba"/>
+                <text x="233" y="66" text-anchor="middle" fill="#4b3d80">2 网络仿真</text>
+                <text x="233" y="86" text-anchor="middle" fill="#6b5aa0">NS-3 / OMNeT++</text>
+                <rect x="316" y="40" width="130" height="64" rx="9" fill="#efeafb" stroke="#7461ba"/>
+                <text x="381" y="66" text-anchor="middle" fill="#4b3d80">3 重复实验</text>
+                <text x="381" y="86" text-anchor="middle" fill="#6b5aa0">20–30 个种子</text>
+                <rect x="464" y="40" width="130" height="64" rx="9" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="529" y="66" text-anchor="middle" fill="#8a3d24">4 指令级仿真</text>
+                <text x="529" y="86" text-anchor="middle" fill="#b06a4e">Cooja功耗/时序</text>
+                <rect x="612" y="40" width="130" height="64" rx="9" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="677" y="66" text-anchor="middle" fill="#0f4f4a">5 小规模实测</text>
+                <text x="677" y="86" text-anchor="middle" fill="#0f4f4a">5–10 个节点</text>
+                <g stroke="#8fb0b3" stroke-width="2">
+                    <line x1="150" y1="72" x2="166" y2="72"/><line x1="298" y1="72" x2="314" y2="72"/>
+                    <line x1="446" y1="72" x2="462" y2="72"/><line x1="594" y1="72" x2="610" y2="72"/>
+                </g>
+                <path d="M677,104 L677,170 L233,170 L233,104" fill="none" stroke="#d06d4d" stroke-width="2" stroke-dasharray="6 4"/>
+                <text x="455" y="190" text-anchor="middle" fill="#8a3d24">结果不一致 → 回溯校准信道/能量模型</text>
+                <text x="20" y="250" fill="#53676d">标量仿真给出统计结论，指令级仿真验证功耗时序，实测提供校准锚点。</text>
+            </g>
+        </svg>
+        <figcaption>图 23-1：仿真工作流闭环。先用脚本快速验证算法逻辑，再进网络仿真器搭完整场景，通过多次重复实验取置信区间，用指令级仿真校验功耗与时序，最后用少量真实节点做“锚点”校准。任一环节与实测不一致，都回到第 2 步修正模型参数。（教学示意：耗时估算见正文。）</figcaption>
+        </figure>
+
         <h2>本章小结与下章预告</h2>
 
         <p>本章我们深入探讨了WSN仿真与建模的完整知识体系。你了解了为什么仿真在WSN研究中不可或缺，掌握了NS3、Cooja、OMNeT++和MATLAB四大仿真工具的核心特性与适用场景，学会了如何通过校准模型参数来提升仿真可信度，更重要的是，你知道了Simulation-Reality Gap的真实存在和应对方法。</p>
 
         <p>下一章，我们将从虚拟世界回到物理世界，进入WSN开发者最感兴趣的话题之一——<strong>硬件设计实战</strong>。你将学会如何从零设计一个传感器节点的原理图、如何进行PCB布局与天线匹配、如何攻克EMC设计难题。真正的"硬核"之旅即将开始，我们第24章见。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>ns-3 Consortium. <a href="https://www.nsnam.org/">ns-3 Network Simulator</a>（WSN 模块、能量与信道模型）。</li>
+            <li>OMNeT++ / INET. <a href="https://omnetpp.org/">omnetpp.org</a> 、<a href="https://inet.omnetpp.org/">inet.omnetpp.org</a>（模块化仿真框架）。</li>
+            <li>Contiki-NG. <a href="https://github.com/contiki-ng/contiki-ng/wiki">Cooja Simulator</a>（MSP430 指令级仿真与能耗估计）。</li>
+            <li>Kotz, D. et al. (2004). <a href="https://doi.org/10.1145/1023663.1023678">Experimental evaluation of wireless simulation assumptions</a>. <em>MSWiM 2004</em>（仿真假设与实测差异的经典研究）。</li>
+        </ul>
+        <p>仿真器特性以其官方文档为准；Simulation-Reality Gap 的一般性结论参考 Kotz 等的实证研究。文中 2006 年论文“节能 40%↦10%”、室内定位“1.5 m↦4.8 m”以及各步骤耗时估算均为案例叙述或典型量级，属<strong>教学示意</strong>，不代表所有协议与场景。</p>
+
         <div class="footer-nav">
             <a href="22.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="24.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
