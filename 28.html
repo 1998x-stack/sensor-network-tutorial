@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第28章 综合实战项目</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--node:#d06d4d;--gw:#7461ba;--cloud:#2f6fb0;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,9 +64,11 @@
             <li><a href="27.html">第27章 新一代传感网</a></li>
             <li><a href="28.html" class="active">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第28章 综合实战项目：智慧农业传感网</h2>
+    </nav>
+    <main class="main-content" id="content">
+    <article>
+        <h1>第28章 综合实战项目：智慧农业传感网</h1>
+        <p class="dek">把 27 章知识串成一个可交付工程：100 亩温室的需求分析、LoRaWAN 选型、STM32WLE5 节点、Contiki-NG 固件、网关与云端管道、功耗与可靠性测试。</p>
 
         <p>大家好，我是你们的讲师。经过前面27章的学习，你已经掌握了从传感器原理、无线通信、网络协议到AI融合、新一代传感网的完整知识体系。现在是时候把所有知识串起来了——用一个真实的综合项目，把每一章学过的东西都落实到代码和硬件上。</p>
 
@@ -61,6 +86,46 @@
         </ul>
 
         <p>每个温室单元部署3个传感器节点（覆盖面积约550m²/节点），共计120个终端节点。加上3个集中器网关（每13-14个节点对应一个网关），形成星型拓扑。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f28a-t f28a-d">
+            <title id="f28a-t">智慧农业传感网系统总体架构</title>
+            <desc id="f28a-d">40 个温室单元共 120 个电池供电节点，通过 LoRaWAN 上行到 3 个集中器网关（树莓派 + SX1302 + ChirpStack），网关经以太网/MQTT 汇聚到云端 InfluxDB 与 Grafana。</desc>
+            <g font-family="system-ui" font-size="12">
+                <rect x="20" y="40" width="230" height="220" rx="12" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="135" y="64" text-anchor="middle" fill="#8a3d24">40 个温室单元 · 120 个节点</text>
+                <g fill="#ffffff" stroke="#d06d4d">
+                    <rect x="40" y="80" width="50" height="34" rx="6"/><rect x="110" y="80" width="50" height="34" rx="6"/><rect x="180" y="80" width="50" height="34" rx="6"/>
+                    <rect x="40" y="130" width="50" height="34" rx="6"/><rect x="110" y="130" width="50" height="34" rx="6"/><rect x="180" y="130" width="50" height="34" rx="6"/>
+                    <rect x="40" y="180" width="50" height="34" rx="6"/><rect x="110" y="180" width="50" height="34" rx="6"/><rect x="180" y="180" width="50" height="34" rx="6"/>
+                </g>
+                <text x="135" y="236" text-anchor="middle" fill="#b06a4e">温/湿 / 光照 / pH / CO₂</text>
+                <text x="135" y="252" text-anchor="middle" fill="#b06a4e">电池供电，续航目标 &gt;1 年</text>
+                <rect x="310" y="70" width="150" height="160" rx="12" fill="#efeafb" stroke="#7461ba"/>
+                <text x="385" y="94" text-anchor="middle" fill="#4b3d80">3 个集中器网关</text>
+                <g fill="#ffffff" stroke="#7461ba">
+                    <rect x="330" y="108" width="110" height="34" rx="6"/><rect x="330" y="150" width="110" height="34" rx="6"/><rect x="330" y="192" width="110" height="34" rx="6"/>
+                </g>
+                <text x="385" y="130" text-anchor="middle" fill="#6b5aa0">东区网关</text>
+                <text x="385" y="172" text-anchor="middle" fill="#6b5aa0">中区网关</text>
+                <text x="385" y="214" text-anchor="middle" fill="#6b5aa0">西区网关</text>
+                <rect x="520" y="70" width="220" height="160" rx="12" fill="#e8f1fb" stroke="#2f6fb0"/>
+                <text x="630" y="94" text-anchor="middle" fill="#1d4d7c">云平台</text>
+                <g fill="#ffffff" stroke="#2f6fb0">
+                    <rect x="540" y="110" width="180" height="30" rx="6"/><rect x="540" y="148" width="180" height="30" rx="6"/><rect x="540" y="186" width="180" height="30" rx="6"/>
+                </g>
+                <text x="630" y="130" text-anchor="middle" fill="#4a79a6">EMQX (MQTT)</text>
+                <text x="630" y="168" text-anchor="middle" fill="#4a79a6">Telegraf → InfluxDB</text>
+                <text x="630" y="206" text-anchor="middle" fill="#4a79a6">Grafana 仪表盘</text>
+                <g stroke="#d06d4d" stroke-width="2" fill="none"><line x1="250" y1="150" x2="308" y2="150"/><path d="M300,145 L308,150 L300,155" fill="none"/></g>
+                <text x="279" y="140" text-anchor="middle" fill="#8a3d24" font-size="11">LoRa</text>
+                <g stroke="#7461ba" stroke-width="2" fill="none"><line x1="460" y1="150" x2="518" y2="150"/><path d="M510,145 L518,150 L510,155" fill="none"/></g>
+                <text x="489" y="140" text-anchor="middle" fill="#4b3d80" font-size="11">以太/MQTT</text>
+                <text x="20" y="288" fill="#53676d" font-size="11">节点数、网关数、链路为该项目方案示意，不代表通用规模。</text>
+            </g>
+        </svg>
+        <figcaption>图 28-1：智慧农业传感网系统架构。40 个温室单元共 120 个电池供电节点，将温/湿/光照/pH/CO₂ 数据经 LoRaWAN 星型上行到 3 个集中器网关（树莓派 + SX1302 + ChirpStack），网关再经以太网/MQTT 汇聚到云端的 EMQX→InfluxDB→Grafana 管道。（规模与链路为本项目方案示意。）</figcaption>
+        </figure>
 
         <h2>28.2 协议选型决策</h2>
 
@@ -257,6 +322,45 @@ PROCESS_THREAD(sensor_node_process, ev, data) {
         <p>云端数据流设计为：<strong>LoRaWAN → MQTT → Telegraf → InfluxDB → Grafana</strong></p>
 
         <p>网关将MQTT消息发到云端的EMQX集群，Telegraf作为数据采集代理解析JSON Payload，写入InfluxDB时序数据库，Grafana负责前端可视化。整个管道的端到端延迟在3-8秒之间——对于农业场景来说完全足够。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 230" aria-labelledby="f28b-t f28b-d">
+            <title id="f28b-t">端到端数据管道：从节点到 Grafana</title>
+            <desc id="f28b-d">节点经 LoRaWAN 上行到网关，网关将数据转为 MQTT，云端由 EMQX 接收，Telegraf 解析 JSON 写入 InfluxDB，最后由 Grafana 可视化。</desc>
+            <g font-family="system-ui" font-size="12">
+                <rect x="16" y="70" width="96" height="56" rx="9" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="64" y="94" text-anchor="middle" fill="#8a3d24">节点</text>
+                <text x="64" y="112" text-anchor="middle" fill="#b06a4e">传感器采集</text>
+                <rect x="140" y="70" width="96" height="56" rx="9" fill="#efeafb" stroke="#7461ba"/>
+                <text x="188" y="94" text-anchor="middle" fill="#4b3d80">网关</text>
+                <text x="188" y="112" text-anchor="middle" fill="#6b5aa0">ChirpStack</text>
+                <rect x="264" y="70" width="96" height="56" rx="9" fill="#e8f1fb" stroke="#2f6fb0"/>
+                <text x="312" y="94" text-anchor="middle" fill="#1d4d7c">EMQX</text>
+                <text x="312" y="112" text-anchor="middle" fill="#4a79a6">MQTT Broker</text>
+                <rect x="388" y="70" width="96" height="56" rx="9" fill="#e8f1fb" stroke="#2f6fb0"/>
+                <text x="436" y="94" text-anchor="middle" fill="#1d4d7c">Telegraf</text>
+                <text x="436" y="112" text-anchor="middle" fill="#4a79a6">解析 JSON</text>
+                <rect x="512" y="70" width="96" height="56" rx="9" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="560" y="94" text-anchor="middle" fill="#0f4f4a">InfluxDB</text>
+                <text x="560" y="112" text-anchor="middle" fill="#2f7a77">时序存储</text>
+                <rect x="636" y="70" width="108" height="56" rx="9" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="690" y="94" text-anchor="middle" fill="#0f4f4a">Grafana</text>
+                <text x="690" y="112" text-anchor="middle" fill="#2f7a77">可视化</text>
+                <g stroke="#8fb0b3" stroke-width="2">
+                    <line x1="112" y1="98" x2="140" y2="98"/><line x1="236" y1="98" x2="264" y2="98"/>
+                    <line x1="360" y1="98" x2="388" y2="98"/><line x1="484" y1="98" x2="512" y2="98"/>
+                    <line x1="608" y1="98" x2="636" y2="98"/>
+                </g>
+                <text x="126" y="88" text-anchor="middle" fill="#8a3d24" font-size="10">LoRa</text>
+                <text x="250" y="88" text-anchor="middle" fill="#4b3d80" font-size="10">MQTT</text>
+                <text x="374" y="88" text-anchor="middle" fill="#4a79a6" font-size="10">MQTT</text>
+                <text x="498" y="88" text-anchor="middle" fill="#4a79a6" font-size="10">Line</text>
+                <text x="622" y="88" text-anchor="middle" fill="#2f7a77" font-size="10">查询</text>
+                <text x="16" y="180" fill="#53676d">端到端延迟约 3–8 秒（农业场景可接受）。</text>
+            </g>
+        </svg>
+        <figcaption>图 28-2：智慧农业系统的端到端数据管道。节点经 LoRaWAN 上行，网关（ChirpStack）将帧转为 MQTT，云端依次经 EMQX 接收、Telegraf 解析 JSON、写入 InfluxDB，最后由 Grafana 展示。端到端延迟约 3–8 秒，对农业监测场景足够。（延迟为该项目实测量级，随部署变化。）</figcaption>
+        </figure>
 
         <p>Grafana仪表盘包含以下面板：</p>
 
@@ -489,12 +593,22 @@ PROCESS_THREAD(sensor_node_process, ev, data) {
 
         <p>感谢大家跟我一起走完了这28章的学习之旅。我是你们的讲师，如果有一天你在田间地头、工厂车间或者实验室里调通了你的第一个传感网系统，希望你会想起这28章里的一些话——那些关于功耗、可靠性、工程决策的话。祝你在传感网的世界里，走得更远。后会有期！👋</p>
 
+        <h2>28.11 资料来源与说明</h2>
+        <ul>
+            <li>LoRa Alliance. <a href="https://lora-alliance.org/resource_hub/lorawan-specification-package/">LoRaWAN Specification</a>（ADR、省电模式等链路机制）。</li>
+            <li>Contiki-NG. <a href="https://github.com/contiki-ng/contiki-ng">github.com/contiki-ng/contiki-ng</a>（内置 LoRaWAN 协议栈）。</li>
+            <li>ChirpStack. <a href="https://www.chirpstack.io/">chirpstack.io</a>（开源 LoRaWAN 网络/应用服务器）。</li>
+            <li>Akyildiz, I. F. et al. (2002). <a href="https://doi.org/10.1016/S1389-1286(01)00302-4">Wireless sensor networks: a survey</a>. <em>Computer Networks</em>（能量与可靠性约束背景）。</li>
+        </ul>
+        <p>本章是一个<strong>教学化的综合案例</strong>：100 亩/40 单元/120 节点规模、协议选型对比表、器件型号与 BOM 单价、功耗与寿命估算、端到端延迟（3–8 秒）与每平方米成本（≈¥3.66）等均为该类项目的典型量级或案例叙述，随品牌、批量与现场条件变化，不代表可直接套用的实测基准；具体规格请以各芯片、传感器与 LoRaWAN 规范的最新文档为准。</p>
+
         <div class="footer-nav">
             <a href="27.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
-            <a href="javascript:void(0)">下一章 →</a>
+            <a href="index.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
