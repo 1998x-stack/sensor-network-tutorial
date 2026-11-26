@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第27章 新一代传感网</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--passive:#d06d4d;--isac:#7461ba;--net:#2f6fb0;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,9 +64,11 @@
             <li><a href="27.html" class="active">第27章 新一代传感网</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
-        <h2>第27章 新一代传感网</h2>
+    </nav>
+    <main class="main-content" id="content">
+    <article>
+        <h1>第27章 新一代传感网</h1>
+        <p class="dek">边界重定义：无源物联网与反向散射、3GPP Ambient IoT、6G 通感一体 ISAC、数字孪生闭环与卫星物联网。</p>
 
         <p>大家好，我是你们的讲师。2026年5月，我在深圳参加了一场物联网展，一个展台让我印象极深——台上放着一个温湿度传感器，没有电池、没有电源线，只靠环境中的Wi-Fi信号就能工作。技术人员拿手机靠近，传感器就亮起了指示灯，开始上报数据。这背后的技术就是<strong>环境反向散射通信（Ambient Backscatter）</strong>——利用环境中已有的射频信号（Wi-Fi、电视广播、蜂窝信号）作为能源和通信介质，彻底消灭了"换电池"这个困扰WSN二十多年的老大难问题。</p>
 
@@ -78,6 +103,38 @@
         </ul>
 
         <p>反向散射通信的原理其实很简单：标签不需要主动发射信号，而是通过改变自身天线的阻抗来"反射"环境中的已有射频信号。反射和吸收分别对应比特0和1，射频源本身不需要做任何修改。这就像是你在路灯下面挥手——你不需要自己发光，路灯的光照到你再反射到别人眼里，别人就能看到你的动作。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 280" aria-labelledby="f27a-t f27a-d">
+            <title id="f27a-t">环境反向散射通信链路：Exciter、Tag 与 Reader</title>
+            <desc id="f27a-d">激励源发射连续波 CW 给无源标签供电，标签采集传感器数据并通过切换天线阻抗调制反射信号，Reader 接收反向散射信号并送往服务器。</desc>
+            <g font-family="system-ui" font-size="12">
+                <rect x="30" y="90" width="150" height="70" rx="10" fill="#efeafb" stroke="#7461ba"/>
+                <text x="105" y="118" text-anchor="middle" fill="#4b3d80">Exciter 激励源</text>
+                <text x="105" y="138" text-anchor="middle" fill="#6b5aa0">发射连续波 CW</text>
+                <rect x="305" y="80" width="150" height="90" rx="10" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="380" y="108" text-anchor="middle" fill="#8a3d24">Tag 无源标签</text>
+                <text x="380" y="128" text-anchor="middle" fill="#b06a4e">采集能量 + 传感器</text>
+                <text x="380" y="148" text-anchor="middle" fill="#b06a4e">切换天线阻抗调制</text>
+                <rect x="580" y="90" width="150" height="70" rx="10" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="655" y="118" text-anchor="middle" fill="#0f4f4a">Reader 接收器</text>
+                <text x="655" y="138" text-anchor="middle" fill="#2f7a77">解调 → 服务器</text>
+                <g stroke="#7461ba" stroke-width="2" fill="none">
+                    <line x1="180" y1="110" x2="303" y2="110"/>
+                    <path d="M295,104 L303,110 L295,116" fill="none"/>
+                </g>
+                <text x="240" y="102" text-anchor="middle" fill="#4b3d80">RF 供电</text>
+                <g stroke="#d06d4d" stroke-width="2" stroke-dasharray="6 4" fill="none">
+                    <line x1="455" y1="140" x2="578" y2="140"/>
+                    <path d="M570,134 L578,140 L570,146" fill="none"/>
+                </g>
+                <text x="515" y="132" text-anchor="middle" fill="#8a3d24">反向散射（比特 0/1 = 吸收/反射）</text>
+                <text x="380" y="215" text-anchor="middle" fill="#53676d">标签不主动发射，只调制环境已有的射频信号；自身功耗降到微瓦级。</text>
+                <text x="380" y="240" text-anchor="middle" fill="#53676d" font-size="11">供电功率、阅读距离等数值随频段与环境变化，属量级示意。</text>
+            </g>
+        </svg>
+        <figcaption>图 27-1：环境反向散射通信链路的三个角色。Exciter/Reader 发射连续波为无源 Tag 供电，Tag 从射频信号中采集能量、读取传感器，并通过切换天线阻抗（吸收/反射）调制反向散射信号，Reader 解调后送往服务器。标签本身不主动发射，功耗降到微瓦级。（供电功率与距离为量级示意。）</figcaption>
+        </figure>
 
         <p>下面是一个简化的环境反向散射通信能耗模型仿真，帮助你理解"零供电"到底是怎么算出来的：</p>
 
@@ -145,6 +202,41 @@ int main() {
         <p>如果说Ambient IoT是以"零功耗"为目标的传感技术，那<strong>通感一体化（Integrated Sensing and Communication, ISAC）</strong>就是重新定义"传感"本身。在6G的愿景中，通信和感知不再作为两个独立的子系统，而是共享同一套频谱和硬件——基站发射的通信信号，同时也可以作为雷达信号来感知环境。</p>
 
         <p>想象一下：一个6G基站发出的OFDM信号，不仅让手机上网，信号碰到墙壁、车辆、行人后产生回波，基站通过分析回波的多普勒频移和时延就能实时感知周围环境的3D点云。这意味着<strong>整个蜂窝网络就是一张覆盖全城的"超级传感器"</strong>。不需要额外部署任何传感节点，基站自己就能看、能听、能感知。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f27b-t f27b-d">
+            <title id="f27b-t">通感一体（ISAC）：同一波形同时通信与感知</title>
+            <desc id="f27b-d">基站发射同一 OFDM 波形：直达用户完成通信，同时碰到车辆、墙体产生回波；基站分析回波的时延与多普勒频移得到目标距离与速度，形成环境感知点云。</desc>
+            <g font-family="system-ui" font-size="12">
+                <rect x="40" y="120" width="110" height="70" rx="10" fill="#e8f1fb" stroke="#2f6fb0"/>
+                <text x="95" y="150" text-anchor="middle" fill="#1d4d7c">6G 基站</text>
+                <text x="95" y="170" text-anchor="middle" fill="#4a79a6">OFDM 收发</text>
+                <rect x="320" y="40" width="100" height="56" rx="10" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="370" y="64" text-anchor="middle" fill="#0f4f4a">用户终端</text>
+                <text x="370" y="82" text-anchor="middle" fill="#2f7a77">通信数据</text>
+                <rect x="600" y="130" width="120" height="60" rx="10" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="660" y="155" text-anchor="middle" fill="#8a3d24">车辆 / 墙体</text>
+                <text x="660" y="174" text-anchor="middle" fill="#b06a4e">环境目标</text>
+                <g stroke="#2f6fb0" stroke-width="2" fill="none">
+                    <line x1="150" y1="140" x2="318" y2="72"/>
+                    <path d="M310,68 L318,72 L312,80" fill="none"/>
+                </g>
+                <text x="235" y="98" fill="#1d4d7c">同一波形：通信</text>
+                <g stroke="#d06d4d" stroke-width="2" fill="none">
+                    <line x1="150" y1="160" x2="598" y2="160"/>
+                </g>
+                <text x="374" y="152" text-anchor="middle" fill="#8a3d24">波形照射目标 → 回波</text>
+                <g stroke="#d06d4d" stroke-width="2" stroke-dasharray="6 4" fill="none">
+                    <line x1="598" y1="184" x2="152" y2="184"/>
+                    <path d="M160,179 L152,184 L160,189" fill="none"/>
+                </g>
+                <text x="374" y="204" text-anchor="middle" fill="#8a3d24">回波：时延→距离，多普勒→速度</text>
+                <text x="40" y="256" fill="#53676d">同一套频谱与射频前端在通信/感知间时分复用，硬件增量成本趋近于零。</text>
+                <text x="40" y="280" fill="#53676d" font-size="11">波形参数与感知精度为技术方向示意，具体指标以 3GPP/ITU 标准化进展为准。</text>
+            </g>
+        </svg>
+        <figcaption>图 27-2：通感一体（ISAC）原理。基站发射同一 OFDM 波形：直达用户终端完成通信，同时经车辆/墙体反射形成回波；基站分析回波的时延与多普勒频移，得到目标的距离与速度，从而在不额外部署传感节点的前提下获得环境感知能力。通信与感知通过共享波形与射频前端实现。具体精度指标以标准化进展为准。</figcaption>
+        </figure>
 
         <p>ISAC在2025-2026年的关键突破包括：</p>
 
@@ -246,12 +338,21 @@ int main() {
 
         <p>好了，第27章就到这里。从无源物联网到通感一体化，从数字孪生到卫星物联网，我们看到传感网的边界正在不断扩展。下一章，也是本教程的最后一章，我们将把28章的知识体系融合到一个完整的实战项目中——<strong>智慧农业传感网</strong>。从需求分析、硬件选型到固件开发、云端部署，全程带你走一遍。</p>
 
+        <h2>27.8 参考资料</h2>
+        <ul>
+            <li>3GPP. <a href="https://www.3gpp.org/specifications-technologies/releases/release-19">Release 19</a>（Ambient IoT / 无源物联网标准化工作）。</li>
+            <li>ITU-R. <a href="https://www.itu.int/en/ITU-R/study-groups/rsg5/rwp5d/imt-2030/Pages/default.aspx">IMT-2030 (6G) 框架</a>（通感一体 ISAC 等使用场景）。</li>
+            <li>Akyildiz, I. F. et al. (2002). <a href="https://doi.org/10.1016/S1389-1286(01)00302-4">Wireless sensor networks: a survey</a>. <em>Computer Networks</em>（传统 WSN 与供电/通信约束的背景）。</li>
+        </ul>
+        <p>无源物联网、Ambient IoT 与 ISAC 的技术方向以 3GPP/ITU 标准进展为准。文中具体数值——标签可采集能量（10–30 μW）、ISAC 波形指标（128QAM / 0.1 m）、Starlink/Iridium/Swarm 的带宽与功耗、渔船油耗（4.2→2.6 t/天）与“温湿度传感器每 30 s 上报”等——均为量级估算或案例叙述，无法在本教程内逐项核验，按<strong>教学示意</strong>处理。</p>
+
         <div class="footer-nav">
             <a href="26.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="28.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
