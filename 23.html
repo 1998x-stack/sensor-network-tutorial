@@ -307,9 +307,9 @@ int main(int argc, char *argv[]) {
         <p>折腾了两周找原因，最后发现是仿真中的<strong>墙壁衰减</strong>完全没有建模。办公室有很多隔断墙、玻璃门、金属柜子，这些都会引入额外的穿透损耗。NS3中默认的信道模型是完全开放空间的，除非你手动注入墙壁衰减参数，否则它会默认无线电波可以穿透一切。从那以后，我养成了一个习惯：在仿真中<strong>故意采用更悲观的信道参数</strong>（路径损耗指数设高一点、阴影方差设大一点），这样仿真结果虽然"难看"一些，反而更接近真实情况。这个教训让我明白了一个道理：<strong>仿真中好看的数字往往是危险的信号，不好看的数字才更值得信任</strong>。</p>
 
         <figure>
-        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f23b-t f23b-d">
-            <title id="f23b-t">Simulation-Reality Gap：两个典型指标对比</title>
-            <desc id="f23b-d">节能路由论文：仿真节能 40% 而实测不到 10%；室内定位：仿真误差约 1.5m 而实测中位数 4.8m。</desc>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f23a-t f23a-d">
+            <title id="f23a-t">Simulation-Reality Gap：两个典型指标对比</title>
+            <desc id="f23a-d">节能路由论文：仿真节能 40% 而实测不到 10%；室内定位：仿真误差约 1.5m 而实测中位数 4.8m。</desc>
             <g font-family="system-ui" font-size="13">
                 <text x="60" y="34" fill="#203035">节能效果（论文案例）</text>
                 <text x="440" y="34" fill="#203035">室内定位误差中位数</text>
@@ -330,7 +330,7 @@ int main(int argc, char *argv[]) {
                 <text x="60" y="288" fill="#53676d" font-size="12">柱高按各自量纲示意；两组数据来自正文叙述的案例，不代表普适比率。</text>
             </g>
         </svg>
-        <figcaption>图 23-2：Simulation-Reality Gap 的两个典型表现。左：节能路由的仿真收益（40%）在真实平台上缩水到不足 10%；右：室内定位的仿真误差（约 1.5 m）在真实办公室中变为中位数 4.8 m——主因是仿真中缺省的信道模型未计入墙体穿透损耗。柱高按各自量纲示意。</figcaption>
+        <figcaption>图 23-1：Simulation-Reality Gap 的两个典型表现。左：节能路由的仿真收益（40%）在真实平台上缩水到不足 10%；右：室内定位的仿真误差（约 1.5 m）在真实办公室中变为中位数 4.8 m——主因是仿真中缺省的信道模型未计入墙体穿透损耗。柱高按各自量纲示意。</figcaption>
         </figure>
 
         <h2>仿真工作流最佳实践</h2>
@@ -348,9 +348,9 @@ int main(int argc, char *argv[]) {
         <p>这套工作流看起来花时间，但它能帮你避免在最糟糕的时间点——投完论文或者交付产品之后——才发现仿真结果不可靠。</p>
 
         <figure>
-        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f23a-t f23a-d">
-            <title id="f23a-t">WSN 仿真工作流：从原型到实测的闭环</title>
-            <desc id="f23a-d">先用脚本快速原型，再进 NS-3/OMNeT++ 搭网，做重复实验取置信区间，用 Cooja 验证功耗时序，最后小规模实测；不一致则回溯校准模型。</desc>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f23b-t f23b-d">
+            <title id="f23b-t">WSN 仿真工作流：从原型到实测的闭环</title>
+            <desc id="f23b-d">先用脚本快速原型，再进 NS-3/OMNeT++ 搭网，做重复实验取置信区间，用 Cooja 验证功耗时序，最后小规模实测；不一致则回溯校准模型。</desc>
             <g font-family="system-ui" font-size="12">
                 <rect x="20" y="40" width="130" height="64" rx="9" fill="#efeafb" stroke="#7461ba"/>
                 <text x="85" y="66" text-anchor="middle" fill="#4b3d80">1 快速原型</text>
@@ -376,7 +376,7 @@ int main(int argc, char *argv[]) {
                 <text x="20" y="250" fill="#53676d">标量仿真给出统计结论，指令级仿真验证功耗时序，实测提供校准锚点。</text>
             </g>
         </svg>
-        <figcaption>图 23-1：仿真工作流闭环。先用脚本快速验证算法逻辑，再进网络仿真器搭完整场景，通过多次重复实验取置信区间，用指令级仿真校验功耗与时序，最后用少量真实节点做“锚点”校准。任一环节与实测不一致，都回到第 2 步修正模型参数。（教学示意：耗时估算见正文。）</figcaption>
+        <figcaption>图 23-2：仿真工作流闭环。先用脚本快速验证算法逻辑，再进网络仿真器搭完整场景，通过多次重复实验取置信区间，用指令级仿真校验功耗与时序，最后用少量真实节点做“锚点”校准。任一环节与实测不一致，都回到第 2 步修正模型参数。（教学示意：耗时估算见正文。）</figcaption>
         </figure>
 
         <h2>本章小结与下章预告</h2>
