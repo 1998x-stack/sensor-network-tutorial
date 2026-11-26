@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第21章 移动与水下传感网</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,10 +64,12 @@
             <li><a href="27.html">第27章 新一代传感网</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第21章 移动与水下传感网</h2>
+        <h1>第21章 移动与水下传感网</h1>
+        <p class="dek">节点会移动、介质换成海水：移动 Sink、DTN 延迟容忍网络、水下声学信道与 AUV 组网定位。</p>
 
         <p>大家好，我是你们的讲师。想象一下：你在地面上使用蓝牙耳机——信号延迟、偶尔断连、音质打折扣——让你觉得"无线通信也就这样了"。但如果你把这副蓝牙耳机丢进游泳池，你会发现它连10厘米外的手机都连不上。再把场景拉远：你在南海中间部署了一组水下地震监测节点，需要将数据传到30公里外的岸基站。无线电波在水里传播距离不到1米就没了——你得用声波。而且这组节点可能被洋流冲走、被鱼群碰歪、或者被路过的AUV（自主水下航行器）撞到。</p>
 
@@ -76,6 +101,43 @@
             <li><strong>Rendezvous点（会合点）</strong>：网络中选取部分节点作为"会合点"，其他节点通过多跳将数据聚合到会合点。移动Sink只需访问会合点，不必遍历每一个节点。这会合点的选择是一个针对旅行商问题的变种——在节点能量和延迟约束下，最小化Sink的路径长度。</li>
             <li><strong>路径规划</strong>：利用机器学习和优化算法（如遗传算法、强化学习）动态规划Sink的最优移动路径。对于大规模动态网络，离线规划结合在线调整是主流方案。</li>
         </ul>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f21a-t f21a-d">
+            <title id="f21a-t">移动 Sink 数据收集：用路径换多跳</title>
+            <desc id="f21a-d">传统多跳汇聚需要节点逐跳转发，靠近汇聚节点的“热区”能耗高；移动 Sink 沿规划轨迹靠近各簇头直接采集，降低多跳转发。</desc>
+            <g font-family="system-ui" font-size="13">
+                <text x="30" y="26" fill="#203035">传统多跳汇聚（热区问题）</text>
+                <text x="430" y="26" fill="#203035">移动 Sink（用移动性换能耗）</text>
+                <rect x="30" y="40" width="320" height="230" rx="10" fill="#f7fbf8" stroke="#c9d6dd"/>
+                <rect x="430" y="40" width="300" height="230" rx="10" fill="#f7fbf8" stroke="#c9d6dd"/>
+                <g fill="#147f80">
+                    <circle cx="80" cy="90" r="7"/><circle cx="150" cy="70" r="7"/><circle cx="220" cy="100" r="7"/>
+                    <circle cx="110" cy="170" r="7"/><circle cx="200" cy="180" r="7"/><circle cx="280" cy="150" r="7"/>
+                </g>
+                <g stroke="#8fb0b3" stroke-dasharray="4 3">
+                    <line x1="80" y1="90" x2="150" y2="70"/><line x1="150" y1="70" x2="220" y2="100"/>
+                    <line x1="110" y1="170" x2="200" y2="180"/><line x1="200" y1="180" x2="280" y2="150"/>
+                    <line x1="220" y1="100" x2="280" y2="150"/><line x1="80" y1="90" x2="110" y2="170"/>
+                </g>
+                <rect x="300" y="200" width="40" height="40" rx="6" fill="#efeafb" stroke="#7461ba"/>
+                <text x="320" y="225" text-anchor="middle" fill="#4b3d80" font-size="11">Sink</text>
+                <circle cx="280" cy="150" r="14" fill="#fdeee7" stroke="#d06d4d" stroke-width="2"/>
+                <text x="296" y="130" fill="#8a3d24">热区</text>
+                <g fill="#147f80">
+                    <circle cx="480" cy="90" r="7"/><circle cx="550" cy="70" r="7"/><circle cx="620" cy="100" r="7"/>
+                    <circle cx="510" cy="170" r="7"/><circle cx="600" cy="180" r="7"/><circle cx="680" cy="150" r="7"/>
+                </g>
+                <path d="M450,220 C520,150 590,150 700,200" fill="none" stroke="#d06d4d" stroke-width="2" stroke-dasharray="7 5"/>
+                <rect x="438" y="205" width="34" height="26" rx="5" fill="#d06d4d"/>
+                <text x="455" y="222" text-anchor="middle" fill="#fff" font-size="11">MS</text>
+                <g stroke="#d06d4d" stroke-dasharray="3 3">
+                    <line x1="470" y1="205" x2="490" y2="100"/><line x1="470" y1="205" x2="555" y2="78"/>
+                </g>
+            </g>
+        </svg>
+        <figcaption>图 21-1：移动 Sink 如何缓解“热区”问题。左侧多跳网络中，靠近固定汇聚节点的节点承担大量转发而提前耗尽能量（热区）；右侧移动 Sink 沿规划轨迹靠近各簇头直接采集，把多跳转发换成受控的移动。（教学示意：拓扑、轨迹与节点数为简化示意。）</figcaption>
+        </figure>
 
         <h2>DTN延迟容忍网络</h2>
 
@@ -214,6 +276,41 @@ var loss3 = totalPathLoss(1000, 50, 2);   // ≈ 30 + 55 ≈ 85 dB —— 高频
 
         <p>这个模型揭示了水下通信的根本困境：<strong>你想传得远，就必须用低频（<10kHz），但低频意味着极低的数据速率（几百bps）。你想要高数据速率，就必须用高频，但高频信号在几百米后就被海水吸收殆尽</strong>。这就是为什么水下声学modem的通信速率远低于大家的直觉——一个10km通信距离的水声modem，典型速率仅为500-5000bps。</p>
 
+        <figure>
+        <svg role="img" viewBox="0 0 760 310" aria-labelledby="f21b-t f21b-d">
+            <title id="f21b-t">水下声学信道的多径与衰减</title>
+            <desc id="f21b-d">声波在水面与海底之间多次反射形成多径；频率越高衰减越大、可达距离越短，因此带宽与距离互相制约。</desc>
+            <g font-family="system-ui" font-size="13">
+                <rect x="30" y="20" width="460" height="250" rx="10" fill="#eef6fb" stroke="#a9c6d8"/>
+                <line x1="30" y1="60" x2="490" y2="60" stroke="#7fb0cf" stroke-width="2"/>
+                <text x="38" y="52" fill="#3f6b85">水面</text>
+                <line x1="30" y1="255" x2="490" y2="255" stroke="#8a7f6b" stroke-width="3"/>
+                <text x="38" y="249" fill="#6b5f4a">海底</text>
+                <circle cx="100" cy="170" r="12" fill="#147f80"/>
+                <text x="100" y="198" text-anchor="middle" fill="#0f4f4a">发送</text>
+                <circle cx="420" cy="170" r="12" fill="#7461ba"/>
+                <text x="420" y="198" text-anchor="middle" fill="#4b3d80">接收</text>
+                <polyline points="104,164 390,60 420,164" fill="none" stroke="#d06d4d" stroke-width="2"/>
+                <polyline points="104,176 390,255 420,176" fill="none" stroke="#916c22" stroke-width="2"/>
+                <line x1="112" y1="170" x2="408" y2="170" stroke="#147f80" stroke-width="2" stroke-dasharray="6 4"/>
+                <text x="260" y="163" text-anchor="middle" fill="#0f4f4a" font-size="12">直达</text>
+                <text x="330" y="86" fill="#8a3d24" font-size="12">水面反射</text>
+                <text x="330" y="240" fill="#6b4f14" font-size="12">海底反射</text>
+                <text x="250" y="300" text-anchor="middle" fill="#3f6b85" font-size="12">声速 ≈1500 m/s（约为无线电的 1/200000）</text>
+                <g>
+                    <line x1="540" y1="40" x2="540" y2="270" stroke="#c9d6dd"/>
+                    <line x1="540" y1="270" x2="730" y2="270" stroke="#c9d6dd"/>
+                    <polyline points="545,70 600,120 650,190 700,250 725,268" fill="none" stroke="#147f80" stroke-width="3"/>
+                    <text x="560" y="60" fill="#53676d" font-size="12">可达距离</text>
+                    <text x="660" y="288" fill="#53676d" font-size="12">频率 →</text>
+                    <text x="600" y="120" fill="#0f4f4a" font-size="12">10 kHz</text>
+                    <text x="660" y="205" fill="#0f4f4a" font-size="12">100 kHz</text>
+                </g>
+            </g>
+        </svg>
+        <figcaption>图 21-2：水下声学信道的两个“坑”。左：水面与海底的多次反射形成严重多径，直达径与反射径在接收端往往时延相差很大；右：频率越高衰减越快（Thorp 模型），因此带宽与距离互相制约——高频只能短距离，低频传得远但速率低。曲线为定性示意，非实测衰减值。</figcaption>
+        </figure>
+
         <h2>水下MAC协议的特殊性</h2>
 
         <p>陆地无线网络中大放异彩的CSMA/CA协议，在水下声学网络中完全行不通。原因很简单：CSMA依靠"先听后说"来避免碰撞——侦听信道空闲后才发送。但声学信号在水中的传播延迟高达0.67秒/公里。当A节点开始发送时，远端的B节点还没有"听到"A的信号，B以为信道空闲就也开始发送——碰撞。这是所谓的<strong>暴露节点问题</strong>在水下的极端放大版。</p>
@@ -254,12 +351,21 @@ var loss3 = totalPathLoss(1000, 50, 2);   // ≈ 30 + 55 ≈ 85 dB —— 高频
 
         <p>好了，从移动的Sink到深海的声学Modem，我们走完了移动与水下传感网的旅程。下一章我们将回到"地面"，但视角完全不同——<strong>多媒体传感网</strong>。摄像头、麦克风、毫米波雷达——当WSN节点从"采集几字节的温度数据"到"处理几MB的视频流"，整个系统设计理念又将被颠覆。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>Akyildiz, I. F., Pompili, D., &amp; Melodia, T. (2005). <a href="https://doi.org/10.1016/j.adhoc.2005.01.004">Underwater acoustic sensor networks: research challenges</a>. <em>Ad Hoc Networks</em>, 3(3)（水下信道特性与网络设计挑战）。</li>
+            <li>Heidemann, J., Stojanovic, M., &amp; Zorzi, M. (2012). <a href="https://doi.org/10.1098/rsta.2011.0214">Underwater sensor networks: applications, advances and challenges</a>. <em>Phil. Trans. R. Soc. A</em>, 370(1958)。</li>
+            <li>Fall, K. (2003). <a href="https://doi.org/10.1145/938985.939011">A delay-tolerant network architecture for challenged internets</a>. <em>SIGCOMM 2003</em>（DTN store-and-forward 架构）。</li>
+        </ul>
+        <p>声速、带宽、多径与衰减特性以上述文献为准。文中“约1500 m/s”“~0.67 s/km”“10–50 kHz”等数值为典型值，受温度、盐度、深度影响；图 21-2 的衰减曲线为定性示意，具体请参考 Thorp 模型与实测数据。</p>
+
         <div class="footer-nav">
             <a href="20.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="22.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
