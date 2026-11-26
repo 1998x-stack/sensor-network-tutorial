@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第22章 多媒体传感网</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,10 +64,12 @@
             <li><a href="27.html">第27章 新一代传感网</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第22章 多媒体传感网</h2>
+        <h1>第22章 多媒体传感网</h1>
+        <p class="dek">当节点从几字节标量到数 MB 视频流：三层视觉架构、轻量编码折中、Wyner-Ziv 分布式压缩与多模态融合。</p>
 
         <p>大家好，我是你们的讲师。想象一下：你正在用手机看一段监控视频，画面中有一只东北虎从红外触发相机前缓步走过。再看第二个画面——一台工业相机正在检测传送带上产品的表面缺陷，每秒处理30帧图像，任何划痕都逃不过它的"眼睛"。第三个画面——一台配备了60GHz毫米波雷达和可见光摄像头的无人机正在对化工厂管道进行交叉验证巡检，雷达穿透烟雾发现了一处微小的气体泄漏点。</p>
 
@@ -134,6 +159,33 @@
 
         <p>这个架构的关键设计原则是<strong>"数据在源头就被消化"</strong>——摄像头节点不传原始视频，而是传处理后的结果。这大幅降低了对网络带宽的要求，但也对节点本地算力提出了高要求。</p>
 
+        <figure>
+        <svg role="img" viewBox="0 0 760 320" aria-labelledby="f22a-t f22a-d">
+            <title id="f22a-t">视觉传感器网络的三层分级架构</title>
+            <desc id="f22a-d">采集层摄像头节点预处理；处理层做融合与事件检测；汇聚层只上传元数据，数据量从 MB 降到 KB。</desc>
+            <g font-family="system-ui" font-size="13">
+                <rect x="40" y="30" width="680" height="70" rx="10" fill="#efeafb" stroke="#7461ba"/>
+                <text x="60" y="58" fill="#4b3d80">汇聚层 Sink</text>
+                <text x="60" y="80" font-size="12" fill="#6b5aa0">元数据（物体类别·时间戳·置信度）—— KB 级</text>
+                <rect x="40" y="120" width="680" height="70" rx="10" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="60" y="148" fill="#8a3d24">处理层 Processing</text>
+                <text x="60" y="170" font-size="12" fill="#b06a4e">多视角融合 · 事件检测 · 语义提取（Jetson Orin / NUC）</text>
+                <rect x="40" y="210" width="680" height="90" rx="10" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="60" y="236" fill="#0f4f4a">采集层 Camera Nodes</text>
+                <g fill="#0f4f4a">
+                    <rect x="70" y="250" width="120" height="36" rx="6" fill="#cfe9e6"/><text x="130" y="273" text-anchor="middle" font-size="12">摄像头节点 1</text>
+                    <rect x="210" y="250" width="120" height="36" rx="6" fill="#cfe9e6"/><text x="270" y="273" text-anchor="middle" font-size="12">摄像头节点 2</text>
+                    <rect x="350" y="250" width="120" height="36" rx="6" fill="#cfe9e6"/><text x="410" y="273" text-anchor="middle" font-size="12">摄像头节点 3</text>
+                </g>
+                <text x="500" y="273" font-size="12" fill="#0f4f4a">本地预处理：不传原始视频</text>
+                <line x1="380" y1="210" x2="380" y2="190" stroke="#8fb0b3"/>
+                <line x1="380" y1="120" x2="380" y2="100" stroke="#8fb0b3"/>
+                <text x="700" y="273" font-size="12" fill="#8a3d24">MB → KB</text>
+            </g>
+        </svg>
+        <figcaption>图 22-1：视觉传感器网络的三层架构。采集层在摄像头节点完成预处理，处理层做融合与事件检测，汇聚层只上传元数据而非原始视频——数据量从 MB 级降到 KB 级。三层之间的分工是 MWSN 控制带宽与功耗的核心设计。（教学示意：分层为概念模型。）</figcaption>
+        </figure>
+
         <h2>轻量视频编码的挑战</h2>
 
         <p>在资源受限的传感器节点上进行视频编码，是一个典型的<strong>"在一个坏消息中寻找最好的折中"</strong>的工程问题。主流的视频编码标准H.264/H.265利用了帧间预测（运动估计）来大幅压缩数据，但这些算法计算量极大——在PC上编码1分钟1080p视频需要数秒甚至数十秒。在低功耗ARM处理器上，H.264的实时编码几乎不可能（除非使用专用的硬件编码器，如Raspberry Pi的VideoCore GPU）。</p>
@@ -157,6 +209,27 @@
         <p><strong>Wyner-Ziv编码（分布式视频压缩）</strong>正是为此而生。它的理论基础来自Slepian-Wolf定理：两个相关信源可以独立编码但联合解码，且可以达到与联合编码相同的压缩率。落实到实现上，视频Wyner-Ziv编码的思想是：摄像头节点只对帧的每个块做信道编码（如LDPC或Turbo码），不做帧间预测；解码端利用已解码的关键帧作为边信息（side information），通过信道解码来纠正编码端的"伪随机"表示。这样可以节省大量编码功耗，但代价是解码端需要更多算力（而解码端通常是电源充足的基站或云端）。</p>
 
         <p>可惜Wyner-Ziv编码在实际产品中推广缓慢——主要原因是在低码率区间，它的率失真性能比H.264差约20-30%，而且缺乏标准化的商用实现。但它提供了一种重要的设计思路：<strong>在资源不对称的系统中，把计算推给资源丰富的一端</strong>。这个思路在MWSN的各类设计中反复出现。</p>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 250" aria-labelledby="f22b-t f22b-d">
+            <title id="f22b-t">传统编码与 Wyner-Ziv 编码的计算分布对比</title>
+            <desc id="f22b-d">传统编码把运动估计与熵编码放在编码端（节点）；Wyner-Ziv 编码只做信道编码，把帧间预测与边信息计算移到解码端（基站/云）。</desc>
+            <g font-family="system-ui" font-size="13">
+                <text x="40" y="36" fill="#203035">传统视频编码（编码端重）</text>
+                <text x="40" y="146" fill="#203035">Wyner-Ziv 分布式编码（编码端轻）</text>
+                <rect x="40" y="48" width="520" height="46" rx="8" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="300" y="76" text-anchor="middle" fill="#8a3d24">编码端：运动估计 + 变换 + 熵编码（重）</text>
+                <rect x="560" y="48" width="160" height="46" rx="8" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="640" y="76" text-anchor="middle" fill="#0f4f4a">解码端（轻）</text>
+                <rect x="40" y="158" width="140" height="46" rx="8" fill="#e6f5f3" stroke="#147f80"/>
+                <text x="110" y="186" text-anchor="middle" fill="#0f4f4a">信道编码</text>
+                <rect x="180" y="158" width="540" height="46" rx="8" fill="#fdeee7" stroke="#d06d4d"/>
+                <text x="450" y="186" text-anchor="middle" fill="#8a3d24">解码端：边信息 + 信道解码 + 重构（重，但电源充足）</text>
+                <text x="40" y="234" fill="#53676d" font-size="12">传感器节点算力/功耗受限 → 把计算负担推向资源丰富的一端</text>
+            </g>
+        </svg>
+        <figcaption>图 22-2：编码计算的“搬运”。传统编码假设“一次编码、多次解码”，把重计算放在编码端；MWSN 的编码端恰是资源紧张的传感器节点，于是 Wyner-Ziv 把帧间预测与边信息计算移到解码端。代价是低码率下率失真性能不如 H.264（约差 20–30%），且缺乏商用标准化实现。</figcaption>
+        </figure>
 
         <h2>基于帧差法的轻量运动检测</h2>
 
@@ -278,12 +351,21 @@ void loop() {
 
         <p>好了，从温湿度到JPEG，从8位MCU到边缘AI，多媒体WSN的精彩远远不止于此。下一章我们将从另一个角度审视WSN系统——<strong>仿真与建模</strong>。我们不是在实验室里每次都搭建几十个节点做实验——既烧钱又耗时。如何用NS-3、OMNeT++和真实硬件在环仿真来加速研发？第23章见。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>Slepian, D., &amp; Wolf, J. (1973). <a href="https://doi.org/10.1109/TIT.1973.1055037">Noiseless coding of correlated information sources</a>. <em>IEEE Trans. Inf. Theory</em>, 19(4)（分布式编码的理论基础）。</li>
+            <li>Wyner, A., &amp; Ziv, J. (1976). <a href="https://doi.org/10.1109/TIT.1976.1055508">The rate-distortion function for source coding with side information at the decoder</a>. <em>IEEE Trans. Inf. Theory</em>, 22(1)。</li>
+            <li>Girod, B. et al. (2005). <a href="https://doi.org/10.1109/JPROC.2004.839619">Distributed video coding</a>. <em>Proceedings of the IEEE</em>, 93(1)（Wyner-Ziv 视频编码综述）。</li>
+        </ul>
+        <p>分布式编码的理论基础与性能差距以上述文献为准。文中单帧图像 10 KB–数 MB、H.264 相对 MJPEG 的 PSNR 差 3–5 dB、Wyner-Ziv 率失真差 20–30% 等数值为典型量级，属<strong>教学示意</strong>，实测值随分辨率、运动强度与硬件而变。</p>
+
         <div class="footer-nav">
             <a href="21.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="23.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
