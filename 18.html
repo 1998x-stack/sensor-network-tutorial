@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
     <title>第18章 部署与测试</title>
     <link rel="stylesheet" href="theme.css">
+    <style>
+        :root{--paper:#fffdf9;--ink:#203035;--subtle:#53676d;--accent:#147f80;--transform:#d06d4d;--structure:#7461ba;--annotation:#916c22;}
+        html{scroll-behavior:smooth;}
+        body{background:#f4f9f2;}
+        .main-content{max-width:820px;}
+        .main-content p,.main-content li{font-size:1.06rem;line-height:1.85;color:var(--ink);}
+        h1{font-size:clamp(1.5rem,4vw,2rem);color:#14524a;line-height:1.3;margin:.2rem 0 .4rem;}
+        .dek{color:var(--subtle);font-size:1rem;margin-bottom:1.2rem;}
+        main figure{margin:1.6rem 0;padding:1rem;background:var(--paper);border:1px solid #dbe7dd;border-radius:14px;}
+        main figure svg{display:block;width:100%;height:auto;}
+        figcaption{font-size:.9rem;color:var(--subtle);line-height:1.6;margin-top:.6rem;}
+        pre{overflow-x:auto;max-width:100%;}
+        code{overflow-wrap:anywhere;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{overflow-wrap:anywhere;}
+        a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+        .skip-link{position:absolute;left:-999px;top:0;background:#fff;color:var(--accent);padding:.6rem 1rem;border-radius:0 0 8px 0;z-index:10;}
+        .skip-link:focus{left:0;}
+        @media (max-width:768px){.main-content{max-width:100%;}}
+        @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto;}}
+        @media print{.sidebar,.skip-link,.footer-nav{display:none;}main figure{break-inside:avoid;}}
+    </style>
 </head>
 <body>
+<a class="skip-link" href="#content">跳转至正文</a>
 <div class="double-border">
 <div class="container">
-    <div class="sidebar">
+    <nav class="sidebar" aria-label="课程目录">
         <h3>📡 课程目录</h3>
         <ul class="chapter-list">
             <li><a href="01.html">第1章 传感网概述</a></li>
@@ -41,10 +64,12 @@
             <li><a href="27.html">第27章 新一代传感网</a></li>
             <li><a href="28.html">第28章 综合实战项目</a></li>
         </ul>
-    </div>
-    <div class="main-content">
+    </nav>
+    <main class="main-content" id="content">
+    <article>
 
-        <h2>第18章 部署与测试</h2>
+        <h1>第18章 部署与测试</h1>
+        <p class="dek">从实验室到现场：部署策略、链路预算与覆盖、RSSI/LQI/PRR 评估、性能测试与故障排查方法论。</p>
 
         <p>大家好，我是你们的讲师。先讲一个让人哭笑不得的真实故事。某团队在办公楼里完美地完成了WSN的实验室测试——数据传输成功率达到99.8%，端到端延迟稳定在50ms以下，电池寿命模拟估算超过2年。一切指标都很漂亮，报告写得让人充满信心。于是团队把整个系统搬到了客户的工厂车间。部署第一天就出事了：节点之间的数据包丢失率飙升到40%，有些节点甚至完全无法加入网络。团队排查了三天——怀疑路由协议有bug、怀疑节点固件版本不一致、怀疑网关配置错误，逐一检查都找不到原因。最后，一个经验丰富的工人在旁边说了句："你们有没有注意到，那个金属架子刚好在你们节点的中间？"</p>
 
@@ -81,6 +106,41 @@
         <div class="tip">
             <strong>实际建议：</strong> 不要为了追求理论上的"最优部署"而投入过多精力。在工程实践中，部署方案基本上是在"尽量规则"和"接受随机"之间取一个实用的折中。你的精力和预算花在现场勘测、链路测试和冗余设计上，往往比花在复杂的部署算法上更值——因为你计算的"最优"在部署现场的风雨和电磁干扰面前可能不值一提。
         </div>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 260" aria-labelledby="f18a-t f18a-d">
+            <title id="f18a-t">随机、规则与自适应部署的覆盖对比</title>
+            <desc id="f18a-d">左：随机撤布，覆盖不均、可能出现空洞；中：规则网格，覆盖确定；右：自适应部署先粗布后移动节点填补空洞。</desc>
+            <g font-family="system-ui">
+                <text x="30" y="26" font-size="15" fill="#203035">随机部署</text>
+                <text x="290" y="26" font-size="15" fill="#203035">规则部署</text>
+                <text x="550" y="26" font-size="15" fill="#203035">自适应部署</text>
+                <rect x="30" y="40" width="200" height="180" rx="8" fill="#f7fbf8" stroke="#c9d6dd"/>
+                <rect x="290" y="40" width="200" height="180" rx="8" fill="#f7fbf8" stroke="#c9d6dd"/>
+                <rect x="550" y="40" width="200" height="180" rx="8" fill="#f7fbf8" stroke="#c9d6dd"/>
+                <g fill="#147f80">
+                    <circle cx="70" cy="80" r="7"/><circle cx="120" cy="70" r="7"/><circle cx="190" cy="95" r="7"/>
+                    <circle cx="90" cy="140" r="7"/><circle cx="160" cy="150" r="7"/><circle cx="205" cy="175" r="7"/>
+                    <circle cx="60" cy="195" r="7"/>
+                </g>
+                <rect x="130" y="115" width="55" height="55" rx="6" fill="#d06d4d" opacity="0.28" stroke="#d06d4d" stroke-dasharray="4 3"/>
+                <g fill="#147f80">
+                    <circle cx="320" cy="75" r="7"/><circle cx="380" cy="75" r="7"/><circle cx="440" cy="75" r="7"/>
+                    <circle cx="320" cy="130" r="7"/><circle cx="380" cy="130" r="7"/><circle cx="440" cy="130" r="7"/>
+                    <circle cx="320" cy="185" r="7"/><circle cx="380" cy="185" r="7"/><circle cx="440" cy="185" r="7"/>
+                </g>
+                <g fill="#147f80">
+                    <circle cx="580" cy="75" r="7"/><circle cx="650" cy="70" r="7"/><circle cx="715" cy="80" r="7"/>
+                    <circle cx="600" cy="150" r="7"/><circle cx="690" cy="160" r="7"/><circle cx="640" cy="195" r="7"/>
+                </g>
+                <g fill="#d06d4d"><circle cx="655" cy="130" r="7"/></g>
+                <line x1="655" y1="130" x2="640" y2="190" stroke="#d06d4d" stroke-dasharray="4 3"/>
+                <text x="180" y="240" font-size="12" fill="#8a3d24">虚线＝覆盖空洞</text>
+                <text x="590" y="240" font-size="12" fill="#8a3d24">橙点＝后补移动节点</text>
+            </g>
+        </svg>
+        <figcaption>图 18-1：三类部署策略的覆盖特征。随机部署用密度换覆盖率，往往存在覆盖空洞；规则部署覆盖确定但在复杂地形难以实施；自适应部署先用移动节点识别并填补空洞。图中节点数目与空洞形状为教学示意，不代表具体算法输出。</figcaption>
+        </figure>
 
         <h2>网络规划：从链路预算到覆盖范围</h2>
 
@@ -146,6 +206,34 @@
         <div class="warning">
             <strong>最容易犯的错误：</strong> 直接用自由空间的链路预算来规划室内或工业环境的WSN。自由空间模型下的"100米"到了密集厂房可能缩水到"5米"。正确的做法是在部署之前进行<strong>现场链路勘测（Site Survey）</strong>——用一台信号发生器和一台频谱分析仪，在候选位置之间实际测量RSSI和LQI，用实测数据校准你的链路预算模型。一次链路勘测花半天时间，比后面加中继节点、改部署位置要划算得多。
         </div>
+
+        <figure>
+        <svg role="img" viewBox="0 0 760 300" aria-labelledby="f18b-t f18b-d">
+            <title id="f18b-t">链路预算阶梯：从发射功率到接收灵敏度</title>
+            <desc id="f18b-d">发射功率 0 dBm 经天线增益、路径损耗逐步衰减为接收功率，接收功率与接收灵敏度之间的距离就是链路裕量。</desc>
+            <g font-family="system-ui" font-size="13">
+                <line x1="90" y1="30" x2="90" y2="270" stroke="#c9d6dd"/>
+                <text x="16" y="40" fill="#53676d">+5 dBm</text>
+                <text x="16" y="266" fill="#53676d">-100 dBm</text>
+                <line x1="90" y1="45" x2="720" y2="45" stroke="#eee"/>
+                <line x1="90" y1="255" x2="720" y2="255" stroke="#eee"/>
+                <polyline points="110,60 210,60 210,78 310,78 310,190 430,190 430,205 560,205" fill="none" stroke="#147f80" stroke-width="3"/>
+                <g fill="#0f4f4a">
+                    <text x="112" y="54">发射功率 0 dBm</text>
+                    <text x="214" y="72">+天线增益 2 dBi</text>
+                    <text x="314" y="184">−路径损耗（环境相关）</text>
+                    <text x="434" y="199">+接收天线增益 2 dBi</text>
+                    <text x="562" y="199">接收功率</text>
+                </g>
+                <line x1="110" y1="255" x2="720" y2="255" stroke="#d06d4d" stroke-dasharray="6 4"/>
+                <line x1="560" y1="205" x2="720" y2="205" stroke="#147f80"/>
+                <text x="562" y="250" fill="#8a3d24">接收灵敏度 −97 dBm</text>
+                <g stroke="#916c22"><line x1="690" y1="205" x2="690" y2="255"/></g>
+                <text x="612" y="234" fill="#6b4f14">裕量</text>
+            </g>
+        </svg>
+        <figcaption>图 18-2：链路预算的“阶梯”。接收功率＝发射功率＋增益−路径损耗；接收功率高出接收灵敏度的部分就是链路裕量（通常预留 10 dB 以上抵抗衰落）。注意：路径损耗高度依赖环境，自由空间的估算在密集厂房里会严重偏乐观。图中数值为示例，非特定硬件实测。</figcaption>
+        </figure>
 
         <h2>链路质量评估：RSSI / LQI / PRR</h2>
 
@@ -443,12 +531,21 @@ int main() {
 
         <p>我们第19章见。</p>
 
+        <h2>参考资料</h2>
+        <ul>
+            <li>Texas Instruments. <a href="https://www.ti.com/product/CC2530">CC2530 Datasheet</a>（接收灵敏度、RSSI/LQI 寄存器与 802.15.4 射频参数）。</li>
+            <li>IEEE. <a href="https://doi.org/10.1109/IEEESTD.2020.9144691">IEEE Std 802.15.4-2020</a>（LQI、ED 与信道评估定义）。</li>
+            <li>Rappaport, T. S. <em>Wireless Communications: Principles and Practice</em>（路径损耗指数与对数距离模型）。</li>
+        </ul>
+        <p>链路预算公式与路径损耗指数区间为行业通行近似；文中的具体数值（如灵敏度 −97 dBm、覆盖半径 1.2 km / 50 m、路径损耗表）属于典型值下的<strong>教学示意</strong>或已作简化，实际值请以具体硬件数据手册与现场实测为准。</p>
+
         <div class="footer-nav">
             <a href="17.html">← 上一章</a>
             <a href="index.html">📖 返回目录</a>
             <a href="19.html">下一章 →</a>
         </div>
-    </div>
+    </article>
+    </main>
 </div>
 </div>
 </body>
